@@ -6,6 +6,12 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="scheme1">@color/scheme1</item>
+        <item name="scheme2">@color/scheme2</item>
+        <item name="scheme3">@color/scheme3</item>
+        <item name="scheme4">@color/scheme4</item>
+        <item name="scheme5">@color/scheme5</item>
+
     </style>
 
 </resources>
