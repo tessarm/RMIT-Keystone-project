@@ -4,39 +4,47 @@
     android:layout_height="match_parent"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
-    android:background="@color/scheme3"
     >
 
 
+    <EditText
+        android:id="@+id/etUsername"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="13dp"
+        android:ems="10"
+        android:hint="Username"
+        android:inputType="textPersonName" />
 
     <EditText
-        android:text = "Username "
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textSize="15sp"
-        android:id = "@+id/username"
-        android:layout_width = "wrap_content"
-        android:layout_height = "wrap_content"
+        android:id="@+id/etPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/etUsername"
+        android:ems="10"
+        android:hint="Password"
+        android:inputType="textPassword" />
+
+    <TextView
+        android:id="@+id/tvRegisterHere"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/bLogin"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="15dp"
-        />
-    <EditText
-        android:layout_below="@id/username"
-        android:id = "@+id/password"
-        android:layout_width = "wrap_content"
-        android:layout_height = "wrap_content"
-        android:inputType = "textPassword"
-        />
-    <Button
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:id = "@+id/button1"
-        android:layout_width = "wrap_content"
-        android:layout_height = "wrap_content"
-        android:onClick = "login"
-        android:text = "Login"
-        android:layout_marginBottom="50dp"
-        android:background = "@color/scheme1"
-        android:textColor="@color/scheme3"
+        android:text="Register here" />
 
-        />
+    <Button
+        android:id="@+id/bLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/etPassword"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="21dp"
+        android:text="Login" />
 </RelativeLayout>

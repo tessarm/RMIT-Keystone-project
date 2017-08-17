@@ -3,9 +3,4 @@
     <color name="colorPrimary">#273043</color>
     <color name="colorPrimaryDark">#EDEFF4</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="scheme1">#273043</color>
-    <color name="scheme2">#8F99AD</color>
-    <color name="scheme3">#EDEFF4</color>
-    <color name="scheme4">#2D6BEF</color>
-    <color name="scheme5">#0449DD</color>
 </resources>

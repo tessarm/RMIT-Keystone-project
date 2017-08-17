@@ -1,52 +1,65 @@
 package dmcjj.rmitpp.toiletlocator;
 
-import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Color;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
-import android.content.Intent;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import dmcjj.rmitpp.toiletlocator.security.LocalAuthorizer;
-import dmcjj.rmitpp.toiletlocator.security.LoginAuthorizer;
-import dmcjj.rmitpp.toiletlocator.security.TestAuthorizer;
 
 /**
  * Created by derrickphung on 10/8/17.
  */
 
-public class Login extends Activity
+public class Login extends AppCompatActivity
 {
-    private EditText username;
-    private EditText password;
-
-    private LoginAuthorizer authorizer = new LocalAuthorizer();
-
+    int attempts = 3;
     @Override
-    public void onCreate(Bundle bundle)
-    {
-        super.onCreate(bundle);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
 
-        username = (EditText)findViewById(R.id.username);
-        password = (EditText)findViewById(R.id.password);
-
-    }
-    public void login(View view){
-            String userText = username.getText().toString();
-            String passText = password.getText().toString();
-
-
+        final EditText etUsername = (EditText) findViewById(R.id.etUsername);
+        final EditText etPassword = (EditText) findViewById(R.id.etPassword);
+        final Button bLogin = (Button) findViewById(R.id.bLogin);
+        final Button bRegister = (Button) findViewById(R.id.bRegister);
+        final TextView tvRegisterLink = (TextView) findViewById(R.id.tvRegisterHere);
+//        final TextView tx1 = (TextView)findViewById(R.id.textView3);
+//        tx1.setVisibility(View.GONE);
 
 
+        tvRegisterLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent registerIntent = new Intent(Login.this, RegisterActivity.class);
+                Login.this.startActivity(registerIntent);
+            }
+        });
 
-        if(authorizer.isAdmin(this, userText, passText)){
-            Intent adminIntent = new Intent(this, AdminActivity.class);
-            startActivity(adminIntent);
-        }
-        else if(authorizer.authorizeUser(this, userText, passText))
-        {
+        bLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(etUsername.getText().toString().equals("admin") && etPassword.getText().toString().equals("password")) {
+                    Toast.makeText(getApplicationContext(), "Redirecting...",Toast.LENGTH_SHORT).show();
+                    Intent userAreaIntent = new Intent(Login.this, UserAreaActivity.class);
+                    Login.this.startActivity(userAreaIntent);
+                }else{
+                    Toast.makeText(getApplicationContext(), "Wrong username or password",Toast.LENGTH_SHORT).show();
 
-            //do somthing when user
-        }
+//                    tx1.setVisibility(View.VISIBLE);
+//                    tx1.setBackgroundColor(Color.RED);
+//                    attempts--;
+//                    tx1.setText(Integer.toString(attempts));
+//
+//                    if (attempts == 0) {
+//                        bLogin.setEnabled(false);
+//                    }
+                }
+            }
+        });
     }
 }
