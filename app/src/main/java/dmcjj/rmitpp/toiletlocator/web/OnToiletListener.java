@@ -6,5 +6,5 @@ package dmcjj.rmitpp.toiletlocator.web;
 
 public interface OnToiletListener
 {
-    void onToiletResponse(ToiletResponse toiletResponse);
+    void onToiletResponse(int requestCode, ToiletResponse toiletResponse);
 }

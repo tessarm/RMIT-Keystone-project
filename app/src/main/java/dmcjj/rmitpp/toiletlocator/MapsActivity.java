@@ -1,6 +1,7 @@
 package dmcjj.rmitpp.toiletlocator;
 
 
+import android.location.LocationListener;
 import android.os.AsyncTask;
 
 import android.Manifest;
@@ -23,7 +24,9 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 
@@ -37,23 +40,62 @@ import java.util.List;
 
 
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
-{
-    private static LatLng DEFAULT_LOCATION = new LatLng(-37.817798,144.968714);
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+    private static LatLng DEFAULT_LOCATION = new LatLng(-37.817798, 144.968714);
 
     private static int PERMISSIONCHECK = 1;
+    private static int CAMERA_ZOOM = 15;
     private GoogleMap mMap;
     private ToiletApi toiletApi;
 
     private ToiletMap toiletMap;
+    private LatLng myLocation = new LatLng(0, 0);
+    private Marker myMarker;
 
     private boolean mapInit = false;
     private SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
             .findFragmentById(R.id.map);
 
+    private LocationListener listener = new LocationListener() {
+        @Override
+        public void onLocationChanged(Location location) {
+
+            LatLng latlng = new LatLng(location.getLatitude(), location.getLongitude());
+            CameraPosition pos = CameraPosition.builder().zoom(CAMERA_ZOOM).bearing(location.getBearing())
+                    .target(latlng).build();
+
+
+            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(pos));
+            myMarker.setPosition(latlng);
+        }
+
+        @Override
+        public void onStatusChanged(String s, int i, Bundle bundle) {
+
+        }
+
+        @Override
+        public void onProviderEnabled(String s) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String s) {
+
+        }
+    };
+
+
+
     private OnToiletListener toiletListener = new OnToiletListener() {
         @Override
-        public void onToiletResponse(ToiletResponse toiletResponse) {
+        public void onToiletResponse(int requestCode, ToiletResponse toiletResponse) {
+
+            Toilet[] data = toiletResponse.getToiletData();
+            for(int i=0; i < data.length; i++){
+                Toilet t = data[i];
+                toiletMap.setDefaultMarker(t.getLocation());
+            }
 
         }
     };
@@ -147,9 +189,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
         toiletMap = ToiletMap.createMap(googleMap);
 
         toiletMap.setDefaultMarker(DEFAULT_LOCATION);
+
+
+
+        //setMapUI
+        mMap.getUiSettings().setMyLocationButtonEnabled(true);
 
 
         LocationManager locationManager = (LocationManager)
@@ -178,13 +226,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMap = googleMap;
 
             LatLng melbourne = new LatLng(locations.getLatitude(), locations.getLongitude());
-            mMap.addMarker(new MarkerOptions().position(melbourne).title("Marker in Melbourne"));
+
+            myMarker = mMap.addMarker(new MarkerOptions().position(melbourne).title("Marker in Melbourne"));
 
             mMap.moveCamera(CameraUpdateFactory.newLatLng(melbourne));
             mMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
 
 
 
+
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 0, listener);
 
 
 
