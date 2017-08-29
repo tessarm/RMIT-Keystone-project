@@ -33,7 +33,9 @@ public class Login extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login);
+        setContentView(R.layout.jason_login);
+
+
 
         final EditText etUsername = (EditText) findViewById(R.id.etUsername);
         final EditText etPassword = (EditText) findViewById(R.id.etPassword);
@@ -64,11 +66,15 @@ public class Login extends AppCompatActivity
         bLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(etUsername.getText().toString().equals("Admin") && etPassword.getText().toString().equals("password")) {
+                if(etUsername.getText().toString().equals("admin") && etPassword.getText().toString().equals("password")) {
                     Toast.makeText(getApplicationContext(), "Redirecting...",Toast.LENGTH_SHORT).show();
                     Intent userAreaIntent = new Intent(Login.this, UserAreaActivity.class);
                     Login.this.startActivity(userAreaIntent);
                 }else{
+                    etPassword.setError("Incorrect");
+                    //etUsername.setError("Incorrect");
+
+
                     Toast.makeText(getApplicationContext(), "Wrong username or password",Toast.LENGTH_SHORT).show();
 
 //                    tx1.setVisibility(View.VISIBLE);

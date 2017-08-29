@@ -1,6 +1,7 @@
 package dmcjj.rmitpp.toiletlocator;
 
 import android.location.Location;
+import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.google.android.gms.maps.LocationSource;
@@ -15,6 +16,14 @@ import dmcjj.rmitpp.toiletlocator.web.ToiletTask;
 
 public class TestAct extends AppCompatActivity
 {
+    @Override
+    protected void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.test);
+    }
+
+
     private OnToiletListener toiletListener = new OnToiletListener() {
         @Override
         public void onToiletResponse(ToiletResponse toiletResponse) {

@@ -1,8 +1,8 @@
 package dmcjj.rmitpp.toiletlocator;
 
-<<<<<<< HEAD
+
 import android.os.AsyncTask;
-=======
+
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -10,7 +10,6 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.support.v4.app.ActivityCompat;
->>>>>>> origin/master
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -26,16 +25,14 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-<<<<<<< HEAD
+
 import dmcjj.rmitpp.toiletlocator.database.TestClass;
 import dmcjj.rmitpp.toiletlocator.web.OnToiletListener;
 import dmcjj.rmitpp.toiletlocator.web.ToiletApi;
 import dmcjj.rmitpp.toiletlocator.web.ToiletResponse;
-
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
-=======
 import java.util.List;
->>>>>>> origin/master
+
+
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
     private static int PERMISSIONCHECK = 1;
@@ -65,7 +62,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mapFragment.getMapAsync(this);
 
-<<<<<<< HEAD
+
         Test();
 
 
@@ -83,7 +80,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         };
         task.execute();
-=======
+
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -109,8 +106,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 // result of the request.
             }
         }
->>>>>>> origin/master
+
     }
+
 
 
 
