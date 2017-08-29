@@ -15,11 +15,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -44,29 +41,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static LatLng DEFAULT_LOCATION = new LatLng(-37.817798, 144.968714);
 
     private static int PERMISSIONCHECK = 1;
-    private static int CAMERA_ZOOM = 15;
-    private GoogleMap mMap;
+
+    //private GoogleMap mMap;
     private ToiletApi toiletApi;
 
     private ToiletMap toiletMap;
-    private LatLng myLocation = new LatLng(0, 0);
-    private Marker myMarker;
+
+
 
     private boolean mapInit = false;
     private SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
             .findFragmentById(R.id.map);
 
-    private LocationListener listener = new LocationListener() {
+    //Current location listener
+    private LocationListener currentLocationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
-
-            LatLng latlng = new LatLng(location.getLatitude(), location.getLongitude());
-            CameraPosition pos = CameraPosition.builder().zoom(CAMERA_ZOOM).bearing(location.getBearing())
-                    .target(latlng).build();
-
-
-            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(pos));
-            myMarker.setPosition(latlng);
+            toiletMap.update(location);
         }
 
         @Override
@@ -154,7 +145,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
         toiletApi = new ToiletApi(this);
-        toiletApi.requestToiletData(toiletListener);
+        toiletApi.requestToiletData(1, toiletListener);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
 
@@ -189,15 +180,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
+        //mMap = googleMap;
         toiletMap = ToiletMap.createMap(googleMap);
-
-        toiletMap.setDefaultMarker(DEFAULT_LOCATION);
-
-
-
-        //setMapUI
-        mMap.getUiSettings().setMyLocationButtonEnabled(true);
 
 
         LocationManager locationManager = (LocationManager)
@@ -218,41 +202,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Location locations = locationManager.getLastKnownLocation(provider);
         List<String> providerList = locationManager.getAllProviders();
         if (null != locations && null != providerList && providerList.size() > 0) {
-            double longitude = locations.getLongitude();
-            double latitude = locations.getLatitude();
-
-
-
-            mMap = googleMap;
 
             LatLng melbourne = new LatLng(locations.getLatitude(), locations.getLongitude());
 
-            myMarker = mMap.addMarker(new MarkerOptions().position(melbourne).title("Marker in Melbourne"));
+            toiletMap.onMapReady(melbourne);
 
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(melbourne));
-            mMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
-
-
-
-
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 0, listener);
-
-
-
-
-
-            // Add a marker in Sydney and move the camera
-            //LatLng melbourne = new LatLng(-37.814, 144.9632);
-            //mMap.addMarker(new MarkerOptions().position(melbourne).title("Marker in Melbourne"));
-            //mMap.moveCamera(CameraUpdateFactory.newLatLng(melbourne));
-
-//        LatLng locationhere new LatLng(location.getLatitude(), location.getLongitude());
-//        mMap.addMarker(new MarkerOptions().position(locationhere).title("Your current location"));
-//        mMap.moveCamera(CameraUpdateFactory.newLatLng(locationhere));
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 0, currentLocationListener);
         }
-
-
-
-
-
-    } }
+    }
+}

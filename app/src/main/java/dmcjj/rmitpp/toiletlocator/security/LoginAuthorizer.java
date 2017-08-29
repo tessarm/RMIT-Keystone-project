@@ -8,6 +8,11 @@ import android.content.Context;
 
 public interface LoginAuthorizer
 {
-    public boolean authorizeUser(Context c, String username, String password);
-    public boolean isAdmin(Context c, String username, String password);
+    interface Callbacks{
+        void OnUserAuthorized(UserInfo userInfo);
+        void OnUserDenied();
+    }
+
+    boolean authorizeUser(Context c, String username, String password, Callbacks loginCallbacks);
+    boolean isAdmin(Context c, String username, String password, Callbacks loginCallbacks);
 }

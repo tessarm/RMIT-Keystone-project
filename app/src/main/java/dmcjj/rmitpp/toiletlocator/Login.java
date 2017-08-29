@@ -2,6 +2,7 @@ package dmcjj.rmitpp.toiletlocator;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -11,6 +12,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.logging.LogRecord;
+
+import dmcjj.rmitpp.toiletlocator.security.LoginAuthorizer;
+import dmcjj.rmitpp.toiletlocator.security.Security;
+import dmcjj.rmitpp.toiletlocator.security.UserInfo;
 
 
 /**
@@ -19,26 +25,34 @@ import java.util.ArrayList;
 
 public class Login extends AppCompatActivity
 {
+    private EditText etUsername;
+    private EditText etPassword;
 
-//    public ArrayList<String> usernames = new ArrayList<String>();
-//    public ArrayList<String> passwords = new ArrayList<String>();
-//    public ArrayList<String> emails = new ArrayList<String>();
-//    public ArrayList<String> names = new ArrayList<String>();
-//
-//    ArrayList getList(ArrayList list)
-//    {
-//        return list;
-//    }
     int attempts = 3;
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+
+
+
+    private LoginAuthorizer.Callbacks loginCallbacks = new LoginAuthorizer.Callbacks() {
+        @Override
+        public void OnUserAuthorized(UserInfo userInfo) {
+            Toast.makeText(getApplicationContext(), "Redirecting...",Toast.LENGTH_SHORT).show();
+            Intent userAreaIntent = new Intent(Login.this, UserAreaActivity.class);
+            Login.this.startActivity(userAreaIntent);
+        }
+
+        @Override
+        public void OnUserDenied() {
+            Toast.makeText(getApplicationContext(), "Wrong username or password",Toast.LENGTH_SHORT).show();
+            etPassword.setError("Incorrect");
+        }
+    };
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.jason_login);
+        etUsername = (EditText) findViewById(R.id.etUsername);
+        etPassword = (EditText) findViewById(R.id.etPassword);
 
-
-
-        final EditText etUsername = (EditText) findViewById(R.id.etUsername);
-        final EditText etPassword = (EditText) findViewById(R.id.etPassword);
         final Button bLogin = (Button) findViewById(R.id.bLogin);
         final Button bRegister = (Button) findViewById(R.id.bRegister);
         final TextView tvRegisterLink = (TextView) findViewById(R.id.tvRegisterHere);
@@ -66,27 +80,17 @@ public class Login extends AppCompatActivity
         bLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(etUsername.getText().toString().equals("admin") && etPassword.getText().toString().equals("password")) {
-                    Toast.makeText(getApplicationContext(), "Redirecting...",Toast.LENGTH_SHORT).show();
-                    Intent userAreaIntent = new Intent(Login.this, UserAreaActivity.class);
-                    Login.this.startActivity(userAreaIntent);
-                }else{
-                    etPassword.setError("Incorrect");
-                    //etUsername.setError("Incorrect");
-
-
-                    Toast.makeText(getApplicationContext(), "Wrong username or password",Toast.LENGTH_SHORT).show();
-
-//                    tx1.setVisibility(View.VISIBLE);
-//                    tx1.setBackgroundColor(Color.RED);
-//                    attempts--;
-//                    tx1.setText(Integer.toString(attempts));
-//
-//                    if (attempts == 0) {
-//                        bLogin.setEnabled(false);
-//                    }
-                }
+            authenticateUser();
             }
         });
+    }
+
+
+    //CODE TO AUTHENTICATE USER
+    private void authenticateUser()
+    {
+        Security security = Security.get();
+        security.getLoginAuthorizer().authorizeUser(this, etUsername.getText().toString(),
+                etPassword.getText().toString(), loginCallbacks);
     }
 }

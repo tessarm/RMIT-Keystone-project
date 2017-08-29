@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import java.util.ArrayList;
+import java.util.logging.Handler;
 
 public class RegisterActivity extends AppCompatActivity  {
 
@@ -15,6 +16,8 @@ public class RegisterActivity extends AppCompatActivity  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+
+
 
         final EditText etEmail = (EditText) findViewById(R.id.etEmail);
         final EditText etName = (EditText) findViewById(R.id.etName);

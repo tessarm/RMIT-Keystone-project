@@ -33,7 +33,7 @@ public class ToiletApi
 
     }
 
-    public void requestToiletData(final OnToiletListener onToiletListener){
+    public void requestToiletData(final int requestCode, final OnToiletListener onToiletListener){
 
         //JSON Listener
         Response.Listener<JSONObject> jsonListener = new Response.Listener<JSONObject>() {
@@ -50,17 +50,12 @@ public class ToiletApi
 
                     }
                     ToiletResponse toiletResponse = new ToiletResponse(toilets);
-                    onToiletListener.onToiletResponse(toiletResponse);
+                    onToiletListener.onToiletResponse(requestCode, toiletResponse);
 
 
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
-
-
-
-
             }
         };
         //Request object
@@ -71,6 +66,4 @@ public class ToiletApi
         requestQueue.add(toiletRequest);
 
     }
-
-
 }
