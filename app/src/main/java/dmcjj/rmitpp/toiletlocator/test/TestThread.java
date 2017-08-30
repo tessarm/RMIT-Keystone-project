@@ -22,6 +22,7 @@ public class TestThread extends HandlerThread
         super("TestName");
         this.uiHandler = uiHandler;
 
+
     }
 
     @Override
@@ -37,6 +38,8 @@ public class TestThread extends HandlerThread
                 m.what = TestAct.WHAT_LOG;
                 m.obj = "Hello Handler";
                 uiHandler.sendMessage(m);
+
+
             }
         };
 

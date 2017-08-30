@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "807656403271",
+    "firebase_url": "https://toilet-locator-pp1.firebaseio.com",
+    "project_id": "toilet-locator-pp1",
+    "storage_bucket": "toilet-locator-pp1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:807656403271:android:c5350cb8b7a902f4",
+        "android_client_info": {
+          "package_name": "dmcjj.rmitpp.toiletlocator"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "807656403271-ie47vqletbo1fj2ibppmir09stj9g140.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "dmcjj.rmitpp.toiletlocator",
+            "certificate_hash": "5a8878403e4a485eed76ae7bcbf270d1b2c1230f"
+          }
+        },
+        {
+          "client_id": "807656403271-v2t6p2u61pjqhojlm7u2gu7j7m51ekfe.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "807656403271-3hsgg23lcp5j0fh0o340uivk9u29tfoe.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7pD6-zoTlK7rBBKPudeVcdf2Hdlb3a78"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -33,6 +33,7 @@ public class ToiletApi
 
     }
 
+
     public void requestToiletData(final int requestCode, final OnToiletListener onToiletListener){
 
         //JSON Listener

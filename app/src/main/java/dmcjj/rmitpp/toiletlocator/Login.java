@@ -3,6 +3,7 @@ package dmcjj.rmitpp.toiletlocator;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -11,12 +12,19 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import java.util.ArrayList;
 import java.util.logging.LogRecord;
 
 import dmcjj.rmitpp.toiletlocator.security.LoginAuthorizer;
 import dmcjj.rmitpp.toiletlocator.security.Security;
 import dmcjj.rmitpp.toiletlocator.security.UserInfo;
+
 
 
 /**
@@ -36,8 +44,12 @@ public class Login extends AppCompatActivity
         @Override
         public void OnUserAuthorized(UserInfo userInfo) {
             Toast.makeText(getApplicationContext(), "Redirecting...",Toast.LENGTH_SHORT).show();
-            Intent userAreaIntent = new Intent(Login.this, UserAreaActivity.class);
-            Login.this.startActivity(userAreaIntent);
+
+
+            //Task<AuthResult> t = FirebaseAuth.getInstance().createUserWithEmailAndPassword("", "");
+
+
+
         }
 
         @Override
@@ -84,13 +96,33 @@ public class Login extends AppCompatActivity
             }
         });
     }
+    private void login(){
+        Intent userAreaIntent = new Intent(Login.this, UserAreaActivity.class);
+        Login.this.startActivity(userAreaIntent);
+    }
 
 
     //CODE TO AUTHENTICATE USER
     private void authenticateUser()
     {
-        Security security = Security.get();
-        security.getLoginAuthorizer().authorizeUser(this, etUsername.getText().toString(),
-                etPassword.getText().toString(), loginCallbacks);
+        String username = etUsername.getText().toString();
+        String password = etPassword.getText().toString();
+
+        FirebaseAuth mAuth;
+
+
+
+        Task<AuthResult> r = FirebaseAuth.getInstance().signInWithEmailAndPassword(username, password);
+        r.addOnCompleteListener(Login.this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if(task.isSuccessful()){
+                    login();
+                }
+
+
+            }
+        });
+
     }
 }
