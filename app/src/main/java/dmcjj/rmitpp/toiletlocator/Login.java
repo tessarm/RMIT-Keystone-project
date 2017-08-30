@@ -105,8 +105,8 @@ public class Login extends AppCompatActivity
     //CODE TO AUTHENTICATE USER
     private void authenticateUser()
     {
-        String username = etUsername.getText().toString();
-        String password = etPassword.getText().toString();
+        final String username = etUsername.getText().toString();
+        final String password = etPassword.getText().toString();
 
         FirebaseAuth mAuth;
 
@@ -118,6 +118,12 @@ public class Login extends AppCompatActivity
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
                     login();
+                }
+                else if(Security.isAdmin(username, password)){
+                    login();
+                }
+                else{
+                    etPassword.setError("Incorrect Password/Email");
                 }
 
 

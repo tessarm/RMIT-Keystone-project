@@ -22,4 +22,10 @@ public class Security
     public LoginAuthorizer getLoginAuthorizer(){
         return loginAuthorizer;
     }
+
+    public static boolean isAdmin(String username, String password) {
+        if(username.contentEquals("admin") && password.contentEquals("password"))
+            return true;
+        return false;
+    }
 }

@@ -121,7 +121,7 @@ public class ToiletMap
             @Override
             public void onDirectionSuccess(Direction direction, String rawBody) {
                if(direction.getStatus().equals(RequestResult.OK)){
-                   PolylineOptions ops = new PolylineOptions();
+                   //PolylineOptions ops = new PolylineOptions();
 
                    Route r = direction.getRouteList().get(0);
 
@@ -135,12 +135,12 @@ public class ToiletMap
                    for(LatLng l : allDirectionPoints){
                        MarkerOptions newOp = new MarkerOptions();
                        newOp.position(l);
-                       googleMap.addMarker(newOp);
+                       //googleMap.addMarker(newOp);
                    }
 
-                   ops.addAll(allDirectionPoints);
+                   //ops.addAll(allDirectionPoints);
 
-                   Polyline p = googleMap.addPolyline(ops);
+                   //Polyline p = googleMap.addPolyline(ops);
 
 
                }

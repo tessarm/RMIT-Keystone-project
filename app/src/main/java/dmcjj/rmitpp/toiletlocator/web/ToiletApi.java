@@ -23,7 +23,7 @@ public class ToiletApi
 {
     private Context context;
     private RequestQueue requestQueue;
-    private static String TOILET_URL = "https://api.myjson.com/bins/vixlx";
+    private static String TOILET_URL = "https://firebasestorage.googleapis.com/v0/b/toilet-locator-pp1.appspot.com/o/toilet.json?alt=media&token=ae5a203a-5f3e-4eb5-9f23-40bfecf92c44";
 
 
     public ToiletApi(Context context){
