@@ -6,6 +6,7 @@ package dmcjj.rmitpp.toiletlocator.security;
 
 public class Security
 {
+    public static final String EMAIL_SUPERUSER = "pp1@gmail.com";
     private static Security instance;
 
     private final LoginAuthorizer loginAuthorizer = new TestAuthorizer();
@@ -23,8 +24,8 @@ public class Security
         return loginAuthorizer;
     }
 
-    public static boolean isAdmin(String username, String password) {
-        if(username.contentEquals("admin") && password.contentEquals("password"))
+    public static boolean isSuperUser(String username, String password) {
+        if(username.contentEquals("pp1@gmail.com") && password.contentEquals("password"))
             return true;
         return false;
     }

@@ -1,6 +1,7 @@
 package dmcjj.rmitpp.toiletlocator;
 
 import android.content.Intent;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,11 +13,14 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 
 import java.util.ArrayList;
 import java.util.logging.Handler;
+
+import dmcjj.rmitpp.toiletlocator.database.Database;
 
 public class RegisterActivity extends AppCompatActivity
 {
@@ -57,7 +61,7 @@ public class RegisterActivity extends AppCompatActivity
     }
 
     private void registerUser(){
-        String email = etEmail.getText().toString();
+        final String email = etEmail.getText().toString();
         String password = etPassword.getText().toString();
         final String username = etUsername.getText().toString();
 
@@ -69,16 +73,18 @@ public class RegisterActivity extends AppCompatActivity
                     FirebaseAuth auth = FirebaseAuth.getInstance();
                     FirebaseUser user = auth.getCurrentUser();
 
-                    UserProfileChangeRequest profileChangeRequest = new
-                            UserProfileChangeRequest.Builder().setDisplayName(username).build();
-                    user.updateProfile(profileChangeRequest);
-                    user.sendEmailVerification().addOnCompleteListener(emailResult);
+
+
+                    Database.getUserRef().child("profile").child("email").setValue(email);
+
+
 
                     Intent createUserIntent = new Intent(RegisterActivity.this, UserAreaActivity.class);
                     RegisterActivity.this.startActivity(createUserIntent);
                 }
                 else{
-                    etEmail.setError("Error");
+                    FirebaseAuthException e = (FirebaseAuthException)task.getException();
+                    etEmail.setError(e.getMessage());
                 }
             }
         });

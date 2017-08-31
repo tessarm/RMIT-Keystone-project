@@ -13,6 +13,8 @@ import com.akexorcist.googledirection.model.Leg;
 import com.akexorcist.googledirection.model.Route;
 import com.akexorcist.googledirection.model.RoutePolyline;
 import com.akexorcist.googledirection.model.Step;
+import com.directions.route.AbstractRouting;
+import com.directions.route.Routing;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -49,6 +51,7 @@ public class ToiletMap
     private ToiletMap(GoogleMap googleMap, Location myStartLocation){
         this.googleMap = googleMap;
         this.myLocation = MyLocation.create(googleMap, myStartLocation);
+
     }
 
     public void update(Location newLocation){
@@ -117,7 +120,10 @@ public class ToiletMap
         myLocation.set(startLocation);
         myLocation.setVisible(true);
 
-        GoogleDirection.withServerKey("AIzaSyBcrtdPGTuBS0-VbmjYkplE7CLJx_yog7Y").from(startLocation).to(DEFAULT_LOCATION).execute(new DirectionCallback() {
+
+
+        GoogleDirection.withServerKey("").
+                from(startLocation).to(DEFAULT_LOCATION). execute(new DirectionCallback() {
             @Override
             public void onDirectionSuccess(Direction direction, String rawBody) {
                if(direction.getStatus().equals(RequestResult.OK)){

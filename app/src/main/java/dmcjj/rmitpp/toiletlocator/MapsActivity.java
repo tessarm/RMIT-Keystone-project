@@ -1,6 +1,7 @@
 package dmcjj.rmitpp.toiletlocator;
 
 
+import android.content.Intent;
 import android.location.LocationListener;
 import android.os.AsyncTask;
 
@@ -15,7 +16,11 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -27,6 +32,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 
+import dmcjj.rmitpp.toiletlocator.activity.AddToiletActivity;
+import dmcjj.rmitpp.toiletlocator.database.Database;
 import dmcjj.rmitpp.toiletlocator.database.TestClass;
 import dmcjj.rmitpp.toiletlocator.map.ToiletMap;
 import dmcjj.rmitpp.toiletlocator.model.Toilet;
@@ -37,7 +44,7 @@ import java.util.List;
 
 
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
     private static LatLng DEFAULT_LOCATION = new LatLng(-37.817798, 144.968714);
 
     private static int PERMISSIONCHECK = 1;
@@ -83,9 +90,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         public void onToiletResponse(int requestCode, ToiletResponse toiletResponse) {
 
             Toilet[] data = toiletResponse.getToiletData();
+            //Database.putToilet(data[0]);
             for(int i=0; i < data.length; i++){
                 Toilet t = data[i];
-                toiletMap.setDefaultMarker(t.getLocation());
+                toiletMap.setDefaultMarker(t.getLocation().toLatLng());
             }
 
         }
@@ -100,6 +108,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Log.i("RequestPerm", "Requested");
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.map_menu, menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch(item.getItemId()){
+            case R.id.addToilet:{
+                Intent addToiletIntent = new Intent(this, AddToiletActivity.class);
+                startActivity(addToiletIntent);
+            }break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        toiletApi.requestToiletData(1, toiletListener);
     }
 
     @Override
@@ -145,7 +179,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
         toiletApi = new ToiletApi(this);
-        toiletApi.requestToiletData(1, toiletListener);
+
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
 

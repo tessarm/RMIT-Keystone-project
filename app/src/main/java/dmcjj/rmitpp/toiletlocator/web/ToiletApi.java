@@ -7,10 +7,19 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import dmcjj.rmitpp.toiletlocator.model.Toilet;
 import dmcjj.rmitpp.toiletlocator.model.ToiletFactory;
@@ -23,7 +32,7 @@ public class ToiletApi
 {
     private Context context;
     private RequestQueue requestQueue;
-    private static String TOILET_URL = "https://firebasestorage.googleapis.com/v0/b/toilet-locator-pp1.appspot.com/o/toilet.json?alt=media&token=ae5a203a-5f3e-4eb5-9f23-40bfecf92c44";
+    private static String TOILET_URL = "https://api.myjson.com/bins/vixlx";
 
 
     public ToiletApi(Context context){
@@ -32,9 +41,42 @@ public class ToiletApi
 
 
     }
+    public void requestToiletData(final int requestCode, final OnToiletListener onToiletListener)
+    {
+        FirebaseDatabase db = FirebaseDatabase.getInstance();
+
+        DatabaseReference tRef = db.getReference().child("toilets");
+
+        tRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot data) {
+                Iterable<DataSnapshot> array = data.getChildren();
+                List<Toilet> toilets = new ArrayList<>();
+
+                for(DataSnapshot a : array){
+                    Object o = a.getValue();
+                    Toilet t = a.getValue(Toilet.class);
+                    toilets.add(t);
+                }
+
+                ToiletResponse res = new ToiletResponse(toilets.toArray(new Toilet[toilets.size()]));
+                onToiletListener.onToiletResponse(requestCode, res);
 
 
-    public void requestToiletData(final int requestCode, final OnToiletListener onToiletListener){
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+    }
+
+
+    private void requestToiletDataDep(final int requestCode, final OnToiletListener onToiletListener){
 
         //JSON Listener
         Response.Listener<JSONObject> jsonListener = new Response.Listener<JSONObject>() {

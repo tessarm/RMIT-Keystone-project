@@ -21,6 +21,7 @@ import com.google.firebase.auth.FirebaseUser;
 import java.util.ArrayList;
 import java.util.logging.LogRecord;
 
+import dmcjj.rmitpp.toiletlocator.developer.activity.DevToolsActivity;
 import dmcjj.rmitpp.toiletlocator.security.LoginAuthorizer;
 import dmcjj.rmitpp.toiletlocator.security.Security;
 import dmcjj.rmitpp.toiletlocator.security.UserInfo;
@@ -98,7 +99,11 @@ public class Login extends AppCompatActivity
     }
     private void login(){
         Intent userAreaIntent = new Intent(Login.this, UserAreaActivity.class);
-        Login.this.startActivity(userAreaIntent);
+        startActivity(userAreaIntent);
+    }
+    private void loginDevTools(){
+        Intent devTools = new Intent(Login.this, DevToolsActivity.class);
+        startActivity(devTools);
     }
 
 
@@ -117,10 +122,11 @@ public class Login extends AppCompatActivity
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
-                    login();
-                }
-                else if(Security.isAdmin(username, password)){
-                    login();
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    if(user.getEmail().contentEquals(Security.EMAIL_SUPERUSER))
+                        loginDevTools();
+                    else
+                        login();
                 }
                 else{
                     etPassword.setError("Incorrect Password/Email");
