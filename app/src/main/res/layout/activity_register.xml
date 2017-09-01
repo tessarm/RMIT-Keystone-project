@@ -6,6 +6,7 @@
     android:paddingRight="16dp"
     >
     <EditText
+        style="@style/AppTheme.EditText"
         android:id="@+id/etUsername"
         android:layout_width="350dp"
         android:layout_height="50dp"
@@ -18,6 +19,7 @@
      />
 
     <EditText
+        style="@style/AppTheme.EditText"
         android:id="@+id/etName"
         android:layout_width="350dp"
         android:layout_height="50dp"
@@ -30,6 +32,7 @@
     />
 
     <EditText
+        style="@style/AppTheme.EditText"
         android:id="@+id/etEmail"
         android:layout_width="350dp"
         android:layout_height="50dp"
@@ -42,6 +45,7 @@
         />
 
     <EditText
+        style="@style/AppTheme.EditText"
         android:id="@+id/etPassword"
         android:layout_width="350dp"
         android:layout_height="50dp"
@@ -54,12 +58,5 @@
      />
 
 
-    <Button
-        android:id="@+id/bRegister"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Register"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/etPassword"
-    />
+
 </RelativeLayout>

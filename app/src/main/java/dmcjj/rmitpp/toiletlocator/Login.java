@@ -21,6 +21,7 @@ import com.google.firebase.auth.FirebaseUser;
 import java.util.ArrayList;
 import java.util.logging.LogRecord;
 
+import dmcjj.rmitpp.toiletlocator.activity.ToiletViewActivity;
 import dmcjj.rmitpp.toiletlocator.developer.activity.DevToolsActivity;
 import dmcjj.rmitpp.toiletlocator.security.LoginAuthorizer;
 import dmcjj.rmitpp.toiletlocator.security.Security;
@@ -62,12 +63,18 @@ public class Login extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if(currentUser != null)
+            login();
+
+
         setContentView(R.layout.jason_login);
         etUsername = (EditText) findViewById(R.id.etUsername);
         etPassword = (EditText) findViewById(R.id.etPassword);
 
         final Button bLogin = (Button) findViewById(R.id.bLogin);
-        final Button bRegister = (Button) findViewById(R.id.bRegister);
+        //final Button bRegister = (Button) findViewById(R.id.bRegister);
         final TextView tvRegisterLink = (TextView) findViewById(R.id.tvRegisterHere);
         final Button bGuest = (Button) findViewById(R.id.bGuest);
 //        final TextView tx1 = (TextView)findViewById(R.id.textView3);

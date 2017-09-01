@@ -3,4 +3,14 @@
 
     <item android:id="@+id/emailDevelopers"
         android:title="Email Developers"/>
+
+    <item android:id="@+id/viewToilets"
+        android:title="View List"/>
+
+    <item android:id="@+id/imageUpload"
+        android:title="Image Upload"/>
+
+    <item android:id="@+id/signOut"
+        android:title="Sign Out"/>
+
 </menu>

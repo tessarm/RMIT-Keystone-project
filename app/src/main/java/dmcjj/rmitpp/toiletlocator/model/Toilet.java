@@ -4,6 +4,7 @@ import android.location.Location;
 import android.location.LocationManager;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.database.IgnoreExtraProperties;
 
 import dmcjj.rmitpp.toiletlocator.geo.GeoCoord;
 import dmcjj.rmitpp.toiletlocator.util.StringUtil;
@@ -26,7 +27,6 @@ public class Toilet
     private boolean disabled;
     private boolean male;
     private boolean female;
-
     private String indoorOutdoor;
 
     private Toilet(){

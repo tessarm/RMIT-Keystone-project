@@ -27,6 +27,12 @@ public class Database
         data.push().setValue(t);
     }
 
+    public static void putComment(String toiletRef, String comment){
+
+        FirebaseDatabase.getInstance().getReference().child("toilets").child(toiletRef).child("comments").push().setValue(comment);
+
+    }
+
     public static void makeAdmin(String email){
 
     }

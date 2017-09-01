@@ -9,13 +9,13 @@ import org.json.JSONObject;
 
 public class ToiletFactory
 {
-    private static String JK_LOCNAME = "location_name";
+    private static String JK_LOCNAME = "name";
     private static String JK_LAT = "lat";
     private static String JK_LON = "lon";
-    private static String JK_DISAB = "disabled";
+    private static String JK_DISAB = "wheelchair";
     private static String JK_MALE = "male";
     private static String JK_FEMALE = "female";
-    private static String JK_OTHER = "other";
+    //private static String JK_OTHER = "other";
     private static String JK_INOUT = "indoor_outdoor";
 
     public  static Toilet createToilet(JSONObject object){
@@ -24,13 +24,14 @@ public class ToiletFactory
             String location = object.getString(JK_LOCNAME);
             double lat = object.getDouble(JK_LAT);
             double lon = object.getDouble(JK_LON);
-            boolean disab = object.getBoolean(JK_DISAB);
-            boolean male = object.getBoolean(JK_MALE);
-            boolean female = object.getBoolean(JK_FEMALE);
-            String other = object.getString(JK_OTHER);
+            boolean disab = object.getString(JK_DISAB).contentEquals("yes");
+            boolean male = object.getString(JK_MALE).contentEquals("yes");
+            boolean female = object.getString(JK_FEMALE).contentEquals("yes");
+            //String other = object.getString(JK_OTHER);
 
 
             Toilet t = new Toilet(location, lat, lon, disab, male, female);
+            
 
             return t;
 

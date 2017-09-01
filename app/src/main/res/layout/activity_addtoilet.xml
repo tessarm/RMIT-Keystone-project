@@ -19,14 +19,14 @@
             android:id="@+id/editLat"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="numberDecimal"/>
+            android:inputType="numberDecimal|numberSigned"/>
 
         <EditText
             android:hint="Lng"
             android:id="@+id/editLng"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="numberDecimal"/>
+            android:inputType="numberDecimal|numberSigned"/>
 
     </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>

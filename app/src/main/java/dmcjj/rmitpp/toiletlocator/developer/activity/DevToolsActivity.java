@@ -70,7 +70,7 @@ public class DevToolsActivity extends AppCompatActivity
 
     private void initToiletData(){
         ToiletApi api = new ToiletApi(this);
-        api.requestToiletData(0, new OnToiletListener() {
+        api.initToiletData(0, new OnToiletListener() {
             @Override
             public void onToiletResponse(int requestCode, ToiletResponse toiletResponse) {
                 for(Toilet t : toiletResponse.getToiletData())

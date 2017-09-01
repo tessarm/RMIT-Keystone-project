@@ -5,6 +5,8 @@ import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,7 +30,7 @@ public class RegisterActivity extends AppCompatActivity
     private EditText etName;
     private EditText etUsername;
     private EditText etPassword;
-    private Button bRegister;
+    //private Button bRegister;
 
     private OnCompleteListener<Void> emailResult = new OnCompleteListener<Void>() {
         @Override
@@ -40,6 +42,23 @@ public class RegisterActivity extends AppCompatActivity
     };
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.register, menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.actDone:{
+                registerUser();
+            }break;
+        }
+        return true;
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
@@ -48,16 +67,7 @@ public class RegisterActivity extends AppCompatActivity
         etName = (EditText) findViewById(R.id.etName);
         etUsername = (EditText) findViewById(R.id.etUsername);
         etPassword = (EditText) findViewById(R.id.etPassword);
-        bRegister = (Button) findViewById(R.id.bRegister);
 
-
-
-        bRegister.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                registerUser();
-            }
-        });
     }
 
     private void registerUser(){

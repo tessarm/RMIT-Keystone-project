@@ -5,7 +5,7 @@ android {
     buildToolsVersion "26.0.1"
     defaultConfig {
         applicationId "dmcjj.rmitpp.toiletlocator"
-        minSdkVersion 19
+        minSdkVersion 16
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
@@ -42,10 +42,15 @@ dependencies {
     compile 'com.github.jd-alexander:library:1.1.0'
 
     compile 'joda-time:joda-time:2.3'
+    compile 'com.squareup.retrofit:retrofit:1.9.0'
 
 
     compile 'com.google.firebase:firebase-database:11.0.4'
     compile 'com.google.firebase:firebase-auth:11.0.4'
+
+    //For Imgur
+    compile 'com.jakewharton:butterknife:7.0.1'
+    compile 'com.squareup.picasso:picasso:2.4.0'
 
 
     testCompile 'junit:junit:4.12'

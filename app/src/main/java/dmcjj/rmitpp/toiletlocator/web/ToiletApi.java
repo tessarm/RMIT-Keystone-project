@@ -32,7 +32,7 @@ public class ToiletApi
 {
     private Context context;
     private RequestQueue requestQueue;
-    private static String TOILET_URL = "https://api.myjson.com/bins/vixlx";
+    private static String TOILET_URL = "https://api.myjson.com/bins/ajkph";
 
 
     public ToiletApi(Context context){
@@ -50,12 +50,18 @@ public class ToiletApi
         tRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot data) {
+
+
                 Iterable<DataSnapshot> array = data.getChildren();
+
+
                 List<Toilet> toilets = new ArrayList<>();
 
                 for(DataSnapshot a : array){
+
                     Object o = a.getValue();
                     Toilet t = a.getValue(Toilet.class);
+
                     toilets.add(t);
                 }
 
@@ -76,7 +82,7 @@ public class ToiletApi
     }
 
 
-    private void requestToiletDataDep(final int requestCode, final OnToiletListener onToiletListener){
+    public void initToiletData(final int requestCode, final OnToiletListener onToiletListener){
 
         //JSON Listener
         Response.Listener<JSONObject> jsonListener = new Response.Listener<JSONObject>() {
