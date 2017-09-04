@@ -20,8 +20,6 @@
 
     </style>
 
-
-
     <style name="DefTextInputLayout" parent="Widget.Design.TextInputLayout">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">match_parent</item>
@@ -32,5 +30,19 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">match_parent</item>
     </style>
+
+
+
+    <style name="AppForm">
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:minHeight">64dp</item>
+    </style>
+
+    <style name="AppForm.EditText">
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+
 
 </resources>

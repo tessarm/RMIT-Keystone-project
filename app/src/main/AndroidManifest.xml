@@ -34,6 +34,7 @@
 
         <activity
             android:name=".Login"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:label="@string/title_activity_maps">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -51,9 +52,11 @@
         <activity android:name=".developer.activity.DevToolsActivity"></activity>
         <activity android:name=".activity.AddToiletActivity"></activity>
         <activity android:name=".activity.ToiletViewActivity"></activity>
-        <activity android:name="akiniyalocts.imgurapiexample.activities.ImageTestActivity">
 
-        </activity>
+        <activity android:name=".Test2Activity"></activity>
+        <service android:name=".service.ImageUploadService">
+
+        </service>
 
     </application>
 

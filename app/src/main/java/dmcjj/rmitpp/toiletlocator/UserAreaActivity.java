@@ -1,12 +1,15 @@
 package dmcjj.rmitpp.toiletlocator;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,14 +19,23 @@ import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
-import akiniyalocts.imgurapiexample.activities.ImageTestActivity;
+import java.io.ByteArrayOutputStream;
+import java.util.UUID;
+
 import dmcjj.rmitpp.toiletlocator.activity.ToiletViewActivity;
 import dmcjj.rmitpp.toiletlocator.database.Database;
 import dmcjj.rmitpp.toiletlocator.map.ToiletMap;
+import dmcjj.rmitpp.toiletlocator.service.ImageUploadService;
 
 public class UserAreaActivity extends AppCompatActivity
 {
+    private static final int REQUEST_IMAGE_CAPTURE = 8374;
+
+    private Button mButtonMap;
+
     private ChildEventListener childListener = new ChildEventListener() {
         @Override
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -58,11 +70,22 @@ public class UserAreaActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_area);
 
-        TextView tvWelcomeMsg = (TextView) findViewById(R.id.tvTest);
-        EditText etUsername = (EditText) findViewById(R.id.etUsername);
-        EditText etEmail = (EditText) findViewById(R.id.etEmail);
-        etEmail.setText("admin@admin.com");
-        etUsername.setText("admin");
+
+        mButtonMap = (Button)findViewById(R.id.buttonMap);
+        mButtonMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent mapsIntent = new Intent(UserAreaActivity.this, MapsActivity.class);
+                UserAreaActivity.this.startActivity(mapsIntent);
+            }
+        });
+
+        //TextView tvWelcomeMsg = (TextView) findViewById(R.id.tvTest);
+        //EditText etUsername = (EditText) findViewById(R.id.etUsername);
+        //EditText etEmail = (EditText) findViewById(R.id.etEmail);
+        ///etEmail.setText("admin@admin.com");
+        //etUsername.setText("admin");
+        /*
         tvWelcomeMsg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -70,6 +93,7 @@ public class UserAreaActivity extends AppCompatActivity
                 UserAreaActivity.this.startActivity(mapsIntent);
             }
         });
+        */
 
         //TODO TEST CODE
         //Database.putComment("-KsrJx1tZzT4jz6HKT06", "This toilet is the best, maccas for the win");
@@ -103,11 +127,35 @@ public class UserAreaActivity extends AppCompatActivity
                 startActivity(i);
             }break;
             case R.id.imageUpload:{
-                Intent i = new Intent(this, ImageTestActivity.class);
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                }
+            }break;
+            case R.id.test:{
+                Intent i = new Intent(this, Test2Activity.class);
                 startActivity(i);
             }break;
+
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+
+            Intent imageUpload = new Intent(this, ImageUploadService.class);
+            imageUpload.putExtra(ImageUploadService.EXTRA_IMAGE, imageBitmap);
+            startService(imageUpload);
+
+
+
+
+            //mImageView.setImageBitmap(imageBitmap);
+        }
     }
 }

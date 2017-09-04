@@ -7,6 +7,9 @@ import android.util.Log;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import dmcjj.rmitpp.toiletlocator.database.Database;
+import dmcjj.rmitpp.toiletlocator.model.Comment;
+
 /**
  * Created by A on 31/08/2017.
  */
@@ -20,6 +23,8 @@ public class ToiletApp extends Application
 
             if(user != null){
                 Log.i("fireuser", user.getEmail());
+                Database.putComment("-KsyKtugBbmJJIT18pcm", new Comment(user.getUid(), "this is a user comment that goes here"));
+                //TODO
             }
 
 
