@@ -1,49 +1,73 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+
+
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
     >
 
-    <TextView
-        android:id="@+id/tvTest"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/etEmail"
-        android:text="Map"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Username"
+    <GridLayout
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
 
- />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:columnCount="2"
+        android:orientation="horizontal"
+        android:rowCount="2">
 
-    <EditText
-        android:id="@+id/etUsername"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:layout_below="@+id/textView2"
-/>
+        <Button
+            android:id="@+id/buttonMap"
+            android:layout_marginRight="4dp"
+            android:layout_marginBottom="4dp"
+            android:textColor="@android:color/white"
+            android:background="@color/colorAccent"
+            style="?attr/borderlessButtonStyle"
+            android:text="Map"
+            android:textSize="30sp"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"/>
 
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Email"
-        android:layout_below="@+id/etUsername"
- />
+        <Button
+            android:layout_marginLeft="4dp"
+            android:layout_marginBottom="4dp"
+            android:textSize="30sp"
+            android:text="..."
+            android:textColor="@android:color/white"
+            android:background="@color/colorPrimaryDark"
+            style="?attr/borderlessButtonStyle"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"/>
 
-    <EditText
-        android:id="@+id/etEmail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textEmailAddress"
-        android:layout_below="@+id/textView3"
- />
-</RelativeLayout>
+        <Button
+            android:layout_marginTop="4dp"
+            android:layout_marginRight="4dp"
+            android:textSize="30sp"
+            android:text="..."
+            android:textColor="@android:color/white"
+            android:background="@color/colorPrimaryDark"
+            style="?attr/borderlessButtonStyle"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+           />
+
+        <Button
+            android:layout_marginTop="4dp"
+            android:layout_marginLeft="4dp"
+            android:textSize="30sp"
+            android:text="..."
+            android:textColor="@android:color/white"
+            android:background="@color/colorPrimaryDark"
+            style="?attr/borderlessButtonStyle"
+
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"/>
+
+    </GridLayout>
+
+
+</FrameLayout>
