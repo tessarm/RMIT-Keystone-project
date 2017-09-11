@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
         android:name=".ToiletApp"
@@ -33,7 +34,7 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".Login"
+            android:name=".activity.TestAct"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:label="@string/title_activity_maps">
             <intent-filter>
@@ -42,21 +43,36 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AdminActivity" />
-        <activity android:name=".RegisterActivity"
+        <activity android:name=".activity.AdminActivity" />
+        <activity android:name=".activity.RegisterActivity"
             android:label="Register Account">
 
         </activity>
-        <activity android:name=".UserAreaActivity"></activity>
-        <activity android:name=".MapsActivity"></activity>
-        <activity android:name=".developer.activity.DevToolsActivity"></activity>
-        <activity android:name=".activity.AddToiletActivity"></activity>
+        <activity android:name=".activity.UserAreaActivity"></activity>
+        <activity android:name=".activity.MapsActivity"></activity>
+        <activity android:name=".activity.AddToiletActivity"
+            android:label="Add Restroom">
+
+        </activity>
         <activity android:name=".activity.ToiletViewActivity"></activity>
 
-        <activity android:name=".Test2Activity"></activity>
+        <activity android:name=".activity.Test2Activity"></activity>
         <service android:name=".service.ImageUploadService">
 
         </service>
+
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="au.com.rmit.pp1.file"
+            android:exported="false"
+            android:grantUriPermissions="true"
+            >
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepath"></meta-data>
+        </provider>
+
 
     </application>
 

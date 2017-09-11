@@ -1,6 +1,6 @@
 package dmcjj.rmitpp.toiletlocator.web;
 
-import dmcjj.rmitpp.toiletlocator.model.Toilet;
+import dmcjj.rmitpp.toiletlocator.model.ToiletValues;
 
 /**
  * Created by A on 21/08/2017.
@@ -8,14 +8,14 @@ import dmcjj.rmitpp.toiletlocator.model.Toilet;
 
 public class ToiletResponse
 {
-    private Toilet[] toiletData;
+    private ToiletValues[] toiletData;
 
-    public ToiletResponse(Toilet[] toilets){
+    public ToiletResponse(ToiletValues[] toilets){
         this.toiletData = toilets;
     }
 
 
-    public Toilet[] getToiletData()
+    public ToiletValues[] getToiletData()
     {
         return toiletData;
     }

@@ -1,21 +1,15 @@
 package dmcjj.rmitpp.toiletlocator.view;
 
 import android.location.Location;
-import android.support.v4.util.ArrayMap;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.google.firebase.database.DataSnapshot;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import dmcjj.rmitpp.toiletlocator.R;
 import dmcjj.rmitpp.toiletlocator.model.Toilet;
+import dmcjj.rmitpp.toiletlocator.model.ToiletValues;
 
 /**
  * Created by A on 2/09/2017.
@@ -44,9 +38,9 @@ public class RealtimeToiletAdapter extends RecyclerView.Adapter<RealtimeToiletAd
     };
 
     //private List<String> KEYS = new ArrayList<>();
-    //private ArrayMap<String, Toilet> toiletData = new ArrayMap<>();
+    //private ArrayMap<String, ToiletValues> toiletData = new ArrayMap<>();
 
-    //private List<Toilet> toiletList;
+    //private List<ToiletValues> toiletList;
     private Location reference;
 
     private RealtimeToiletAdapter(){
@@ -67,7 +61,7 @@ public class RealtimeToiletAdapter extends RecyclerView.Adapter<RealtimeToiletAd
     public void onBindViewHolder(ToiletViewHolder holder, int position) {
         Toilet item = firebaseRealtimeList.get(position);
 
-        holder.textTitle.setText(item.getName());
+        holder.textTitle.setText(item.value.getName());
     }
 
     @Override

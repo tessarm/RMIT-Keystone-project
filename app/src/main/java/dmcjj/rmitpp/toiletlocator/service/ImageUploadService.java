@@ -4,9 +4,12 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.util.UUID;
@@ -17,7 +20,9 @@ import java.util.UUID;
 
 public class ImageUploadService extends IntentService
 {
-    public static String EXTRA_IMAGE = "extra_image";
+    public static final String EXTRA_KEY = "key";
+
+    public static final String EXTRA_IMAGE = "extra_image";
 
     public ImageUploadService() {
         super("ImageUploadService");
@@ -34,7 +39,15 @@ public class ImageUploadService extends IntentService
             byte[] byteData = boas.toByteArray();
             FirebaseStorage storage = FirebaseStorage.getInstance();
             StorageReference sref = storage.getReference("images/toilets/" + UUID.randomUUID() + ".png");
-            sref.putBytes(byteData);
+
+            sref.putBytes(byteData).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    Log.i("fireStorage", "Uploaded:"+taskSnapshot.getDownloadUrl());
+                }
+            });
+
+
 
 
 

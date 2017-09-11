@@ -6,31 +6,22 @@ import android.location.LocationManager;
 import com.akexorcist.googledirection.DirectionCallback;
 import com.akexorcist.googledirection.GoogleDirection;
 import com.akexorcist.googledirection.constant.RequestResult;
-import com.akexorcist.googledirection.model.Coordination;
 import com.akexorcist.googledirection.model.Direction;
-import com.akexorcist.googledirection.model.GeocodedWaypoint;
 import com.akexorcist.googledirection.model.Leg;
 import com.akexorcist.googledirection.model.Route;
-import com.akexorcist.googledirection.model.RoutePolyline;
 import com.akexorcist.googledirection.model.Step;
-import com.directions.route.AbstractRouting;
-import com.directions.route.Routing;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
-import dmcjj.rmitpp.toiletlocator.model.Toilet;
+import dmcjj.rmitpp.toiletlocator.model.ToiletValues;
 
 /**
  * Created by A on 29/08/2017.
@@ -39,18 +30,17 @@ public class ToiletMap
 {
     private static LatLng DEFAULT_LOCATION = new LatLng(-37.817798, 144.968714);
     private GoogleMap googleMap;
-    private Toilet[] mapData;
-    private static int CAMERA_ZOOM = 15;
+    private ToiletValues[] mapData;
+    private static int CAMERA_ZOOM = 13;
     private MyLocation myLocation;
     private boolean animateLocation;
-    //private Marker myMarker;
-    //private Location myLocation;
-    //private LatLng myLatLng = new LatLng(0, 0);
+
+
     List<LatLng> allDirectionPoints = new ArrayList<>();
 
     private ToiletMap(GoogleMap googleMap, Location myStartLocation){
         this.googleMap = googleMap;
-        this.myLocation = MyLocation.create(googleMap, myStartLocation);
+        this.myLocation = MyLocation.create();
 
     }
 
@@ -65,7 +55,7 @@ public class ToiletMap
             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(pos));
         }
 
-        myLocation.set(newLocation);
+       // myLocation.set(newLocation);
 
         //myMarker.setPosition(latlng);
         //myMarker.setVisible(true);
@@ -83,18 +73,19 @@ public class ToiletMap
         googleMap.addMarker(m);
     }
 
-    public void setDefaultMarker(double lat, double lng){
-        setDefaultMarker(new LatLng(lat, lng));
+    public void setDefaultMarker(double lat, double lng, String msg){
+        setDefaultMarker(new LatLng(lat, lng), msg);
 
     }
-    public void setDefaultMarker(LatLng latLng){
+    public void setDefaultMarker(LatLng latLng, String msg){
         MarkerOptions op = new MarkerOptions();
         op.position(latLng);
+        op.title(msg);
         addMarker(op);
     }
 
-    public void setDefaultMarker(Location location){
-        setDefaultMarker(location.getLatitude(), location.getLongitude());
+    public void setDefaultMarker(Location location, String msg){
+        setDefaultMarker(location.getLatitude(), location.getLongitude(), msg);
     }
     public void setAnimateLocation(boolean b){
         this.animateLocation = b;
@@ -117,25 +108,27 @@ public class ToiletMap
 
 
     public void onMapReady(LatLng startLocation) {
-        myLocation.set(startLocation);
-        myLocation.setVisible(true);
+       // myLocation.set(startLocation);
+       // myLocation.setVisible(true);
 
 
 
-        GoogleDirection.withServerKey("").
-                from(startLocation).to(DEFAULT_LOCATION). execute(new DirectionCallback() {
+        GoogleDirection.withServerKey("AIzaSyBglDYQrYOhOwESWiFrEtFUQEqn-QLt0uI").
+                from(startLocation).to(DEFAULT_LOCATION).execute(new DirectionCallback() {
             @Override
             public void onDirectionSuccess(Direction direction, String rawBody) {
                if(direction.getStatus().equals(RequestResult.OK)){
-                   //PolylineOptions ops = new PolylineOptions();
+                   PolylineOptions ops = new PolylineOptions();
 
                    Route r = direction.getRouteList().get(0);
+
 
                    List<Leg> legs = r.getLegList();
                    for(Leg l : legs) {
 
                        List<Step> steps = l.getStepList();
                        pushAllSteps(steps);
+
                    }
 
                    for(LatLng l : allDirectionPoints){
@@ -144,11 +137,9 @@ public class ToiletMap
                        //googleMap.addMarker(newOp);
                    }
 
-                   //ops.addAll(allDirectionPoints);
+                   ops.addAll(allDirectionPoints);
 
-                   //Polyline p = googleMap.addPolyline(ops);
-
-
+                   Polyline p = googleMap.addPolyline(ops);
                }
 
 
@@ -165,4 +156,5 @@ public class ToiletMap
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(startLocation, CAMERA_ZOOM));
 
     }
+
 }

@@ -16,6 +16,7 @@ import java.util.List;
 
 import dmcjj.rmitpp.toiletlocator.R;
 import dmcjj.rmitpp.toiletlocator.model.Toilet;
+import dmcjj.rmitpp.toiletlocator.model.ToiletValues;
 
 /**
  * Created by A on 31/08/2017.
@@ -26,7 +27,7 @@ public class ToiletAdapter extends RecyclerView.Adapter<ToiletAdapter.ToiletView
     private List<String> KEYS = new ArrayList<>();
     private ArrayMap<String, Toilet> toiletData = new ArrayMap<>();
 
-    //private List<Toilet> toiletList;
+    //private List<ToiletValues> toiletList;
     private Location reference;
 
     public void add(DataSnapshot dataToilet){
@@ -57,7 +58,7 @@ public class ToiletAdapter extends RecyclerView.Adapter<ToiletAdapter.ToiletView
     public void onBindViewHolder(ToiletViewHolder holder, int position) {
         Toilet item = toiletData.get(KEYS.get(position));
 
-        holder.textTitle.setText(item.getName());
+        holder.textTitle.setText(item.value.getName());
     }
 
     @Override

@@ -88,7 +88,7 @@ public class FirebaseRealtimeList<T>
         this.aClass = aClass;
     }
 
-    //private List<Toilet> toiletList;
+    //private List<ToiletValues> toiletList;
 
 
     private void add(DataSnapshot dataToilet){

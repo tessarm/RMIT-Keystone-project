@@ -5,43 +5,47 @@ import android.os.HandlerThread;
 import android.os.Message;
 import android.util.Log;
 
-import dmcjj.rmitpp.toiletlocator.TestAct;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
+import dmcjj.rmitpp.toiletlocator.activity.TestAct;
 
 /**
  * Created by A on 30/08/2017.
  */
 
-public class TestThread extends HandlerThread
+public class TestThread implements Runnable
 {
-    public Handler handler;
+    private Handler.Callback mCallback = new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message message) {
+            return false;
+        }
+    };
 
     private Handler uiHandler;
 
 
     public TestThread(Handler uiHandler) {
-        super("TestName");
         this.uiHandler = uiHandler;
-
-
     }
 
     @Override
-    public synchronized void start() {
-        super.start();
-        Log.i("thread", "Started");
-        handler = new Handler(getLooper()){
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                Log.i("thread", Thread.currentThread().getName());
-                Message m = uiHandler.obtainMessage();
-                m.what = TestAct.WHAT_LOG;
-                m.obj = "Hello Handler";
-                uiHandler.sendMessage(m);
+    public void run() {
+        long start = System.currentTimeMillis();
 
+        List<Integer> nums = new LinkedList<>();
 
-            }
-        };
+        for(int i=0;i < 10000000; i++)
+        {
+            if(i % 7 == 0)
+                nums.add(i);
+        }
+        long delta = System.currentTimeMillis() - start;
+        Message msg = uiHandler.obtainMessage();
+        msg.obj = "loop took " + delta + " millis to complete. There are " + nums.size() + " % 7";
+        uiHandler.sendMessage(msg);
 
 
 

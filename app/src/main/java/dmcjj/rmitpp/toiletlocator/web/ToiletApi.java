@@ -18,10 +18,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import dmcjj.rmitpp.toiletlocator.model.Toilet;
+import dmcjj.rmitpp.toiletlocator.model.ToiletValues;
 import dmcjj.rmitpp.toiletlocator.model.ToiletFactory;
 
 /**
@@ -55,17 +54,17 @@ public class ToiletApi
                 Iterable<DataSnapshot> array = data.getChildren();
 
 
-                List<Toilet> toilets = new ArrayList<>();
+                List<ToiletValues> toilets = new ArrayList<>();
 
                 for(DataSnapshot a : array){
 
                     Object o = a.getValue();
-                    Toilet t = a.getValue(Toilet.class);
+                    ToiletValues t = a.getValue(ToiletValues.class);
 
                     toilets.add(t);
                 }
 
-                ToiletResponse res = new ToiletResponse(toilets.toArray(new Toilet[toilets.size()]));
+                ToiletResponse res = new ToiletResponse(toilets.toArray(new ToiletValues[toilets.size()]));
                 onToiletListener.onToiletResponse(requestCode, res);
 
 
@@ -90,9 +89,9 @@ public class ToiletApi
             public void onResponse(JSONObject response) {
                 try {
                     JSONArray array = response.getJSONArray("toilets");
-                    Toilet[] toilets = new Toilet[array.length()];
+                    ToiletValues[] toilets = new ToiletValues[array.length()];
                     for(int i=0; i < array.length(); i++){
-                        Toilet toilet = ToiletFactory.createToilet(array.getJSONObject(i));
+                        ToiletValues toilet = ToiletFactory.createToilet(array.getJSONObject(i));
                         toilets[i] = toilet;
 
                         Log.i("toiletapi", toilet.getName());

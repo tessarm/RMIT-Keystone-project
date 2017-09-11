@@ -2,23 +2,16 @@ package dmcjj.rmitpp.toiletlocator.activity;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.util.ArrayMap;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import dmcjj.rmitpp.toiletlocator.R;
-import dmcjj.rmitpp.toiletlocator.model.Toilet;
 import dmcjj.rmitpp.toiletlocator.view.SimpleDividerItemDecoration;
 import dmcjj.rmitpp.toiletlocator.view.ToiletAdapter;
 import dmcjj.rmitpp.toiletlocator.web.OnToiletListener;
@@ -84,7 +77,7 @@ public class ToiletViewActivity extends AppCompatActivity
 
 
 
-        FirebaseDatabase.getInstance().getReference().child("toilets").addChildEventListener(childEventListener);
+        FirebaseDatabase.getInstance().getReference().child("toilets/data").addChildEventListener(childEventListener);
 
         ToiletApi api = new ToiletApi(this);
         api.requestToiletData(0, toiletListener);

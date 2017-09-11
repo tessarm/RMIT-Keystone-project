@@ -18,7 +18,7 @@ public class ToiletFactory
     //private static String JK_OTHER = "other";
     private static String JK_INOUT = "indoor_outdoor";
 
-    public  static Toilet createToilet(JSONObject object){
+    public  static ToiletValues createToilet(JSONObject object){
 
         try {
             String location = object.getString(JK_LOCNAME);
@@ -30,14 +30,14 @@ public class ToiletFactory
             //String other = object.getString(JK_OTHER);
 
 
-            Toilet t = new Toilet(location, lat, lon, disab, male, female);
+            ToiletValues t = null;// new ToiletValues(location, lat, lon, disab, male, female);
             
 
             return t;
 
         }
         catch (JSONException e){
-            return Toilet.NULL;
+            return ToiletValues.NULL;
         }
 
     }
