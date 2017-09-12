@@ -52,9 +52,12 @@ dependencies {
     compile 'com.google.firebase:firebase-storage:11.0.4'
     compile 'com.google.firebase:firebase-messaging:11.0.4'
 
+    //compile "org.apache.httpcomponents:4.2.3"
+
     //compile 'com.firebase:geofire-android:2.1.1'
 
     //For Imgur
+
 
     compile 'com.squareup.picasso:picasso:2.4.0'
 

@@ -2,6 +2,8 @@ package dmcjj.rmitpp.toiletlocator.map;
 
 import android.location.Location;
 
+import com.google.firebase.database.DataSnapshot;
+
 import dmcjj.rmitpp.toiletlocator.interfaces.ILocation;
 
 /**
@@ -11,4 +13,5 @@ import dmcjj.rmitpp.toiletlocator.interfaces.ILocation;
 public interface IRestroomMap extends ILocation
 {
     Location getLastLocation();
+    DataSnapshot getCurrentToilet();
 }

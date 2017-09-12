@@ -4,7 +4,6 @@ import android.location.Location;
 import android.support.v4.util.ArrayMap;
 import android.util.Log;
 
-import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.GeoQuery;
 import com.firebase.geofire.GeoQueryEventListener;
@@ -19,7 +18,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import dmcjj.rmitpp.toiletlocator.database.DbRef;
+import dmcjj.rmitpp.toiletlocator.DbRef;
 import dmcjj.rmitpp.toiletlocator.model.Toilet;
 import dmcjj.rmitpp.toiletlocator.view.UiHandler;
 
@@ -52,6 +51,7 @@ public class RestroomMap implements IRestroomMap
 
 
     private Marker mRedMarker,mCurrentSelectedMarker;
+    private DataSnapshot mCurrentToilet;
 
 
 
@@ -99,9 +99,9 @@ public class RestroomMap implements IRestroomMap
             mCurrentSelectedMarker.setVisible(false);
             mRedMarker.setPosition(marker.getPosition());
             mRedMarker.setVisible(true);
-            DataSnapshot t = mMarkerId2Toilet.get(markerClickId);
+            mCurrentToilet = mMarkerId2Toilet.get(markerClickId);
 
-            return mUiHandler.onToiletClicked(t);
+            return mUiHandler.onToiletClicked(mCurrentToilet);
 
         }
     };
@@ -112,13 +112,13 @@ public class RestroomMap implements IRestroomMap
         public void onKeyEntered(String toiletKey, GeoLocation location) {
             mGeoToiletMap.put(toiletKey, null);
             Log.d("geofire", String.format("OnKeyEntered:key=%s|lat=%f|lng=%f", toiletKey, location.latitude, location.longitude));
-            mDatabase.getReference(DbRef.TOILETS_DATA + "/"+toiletKey).addValueEventListener(mToiletValueListener);
+            mDatabase.getReference(DbRef.DBREF_TOILETS_DATA + "/"+toiletKey).addValueEventListener(mToiletValueListener);
         }
 
         @Override
         public void onKeyExited(String toiletKey) {
             mGeoToiletMap.remove(toiletKey);
-            mDatabase.getReference(DbRef.TOILETS_DATA + "/"+toiletKey).removeEventListener(mToiletValueListener);
+            mDatabase.getReference(DbRef.DBREF_TOILETS_DATA + "/"+toiletKey).removeEventListener(mToiletValueListener);
             Log.d("geofire", "OnKeyExited:key="+toiletKey);
         }
 
@@ -140,8 +140,8 @@ public class RestroomMap implements IRestroomMap
         this.mMyLocation = MyLocation.create().update(startLocation);
         this.mUiHandler = uiHandler;
 
-        GeoFire geoFire = new GeoFire(mDatabase.getReference(DbRef.GEOFIRE_TOILETS));
-        mGeoQuery = geoFire.queryAtLocation(new GeoLocation(startLocation.getLatitude(), startLocation.getLongitude()),mSearchRadius);
+        //GeoFire geoFire = new GeoFire(mDatabase.getReference(DbRef.DBREF_GEOFIRE_TOILETS));
+        mGeoQuery = DbRef.GEOFIRE_TOILETS.queryAtLocation(new GeoLocation(startLocation.getLatitude(), startLocation.getLongitude()),mSearchRadius);
         mGeoQuery.addGeoQueryEventListener(mGeoEvent);
 
         MarkerOptions selectedOps = new MarkerOptions();
@@ -186,4 +186,10 @@ public class RestroomMap implements IRestroomMap
     public Location getLastLocation() {
         return mMyLocation.getLocation();
     }
+
+    @Override
+    public DataSnapshot getCurrentToilet() {
+        return mCurrentToilet;
+    }
+
 }

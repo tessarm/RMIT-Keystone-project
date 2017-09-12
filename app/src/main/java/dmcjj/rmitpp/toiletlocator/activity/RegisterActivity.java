@@ -16,7 +16,7 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
 
 import dmcjj.rmitpp.toiletlocator.R;
-import dmcjj.rmitpp.toiletlocator.database.Database;
+import dmcjj.rmitpp.toiletlocator.Database;
 import dmcjj.rmitpp.toiletlocator.view.ImageAdapter;
 
 public class RegisterActivity extends AppCompatActivity

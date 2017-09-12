@@ -14,9 +14,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import dmcjj.rmitpp.toiletlocator.R;
 import dmcjj.rmitpp.toiletlocator.view.SimpleDividerItemDecoration;
 import dmcjj.rmitpp.toiletlocator.view.ToiletAdapter;
-import dmcjj.rmitpp.toiletlocator.web.OnToiletListener;
-import dmcjj.rmitpp.toiletlocator.web.ToiletApi;
-import dmcjj.rmitpp.toiletlocator.web.ToiletResponse;
 
 /**
  * Created by A on 31/08/2017.
@@ -56,13 +53,6 @@ public class ToiletViewActivity extends AppCompatActivity
         }
     };
 
-    private OnToiletListener toiletListener = new OnToiletListener() {
-        @Override
-        public void onToiletResponse(int requestCode, ToiletResponse toiletResponse) {
-            //adapter.setData(Arrays.asList(toiletResponse.getToiletData()));
-        }
-    };
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,8 +69,8 @@ public class ToiletViewActivity extends AppCompatActivity
 
         FirebaseDatabase.getInstance().getReference().child("toilets/data").addChildEventListener(childEventListener);
 
-        ToiletApi api = new ToiletApi(this);
-        api.requestToiletData(0, toiletListener);
+        //ToiletApi api = new ToiletApi(this);
+        //api.requestToiletData(0, toiletListener);
 
 
     }

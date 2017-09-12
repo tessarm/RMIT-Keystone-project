@@ -11,7 +11,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import dmcjj.rmitpp.toiletlocator.database.Database;
+import dmcjj.rmitpp.toiletlocator.Database;
 import dmcjj.rmitpp.toiletlocator.view.FirebaseRealtimeList;
 
 /**

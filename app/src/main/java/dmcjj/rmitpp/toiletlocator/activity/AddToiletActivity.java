@@ -16,7 +16,6 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -31,16 +30,13 @@ import android.widget.ImageView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseException;
-import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.List;
 import java.util.UUID;
 
 import dmcjj.rmitpp.toiletlocator.R;
-import dmcjj.rmitpp.toiletlocator.database.Database;
-import dmcjj.rmitpp.toiletlocator.firemodel.FireToilet;
+import dmcjj.rmitpp.toiletlocator.Database;
 import dmcjj.rmitpp.toiletlocator.geo.MyLocationListener;
 import dmcjj.rmitpp.toiletlocator.model.ToiletValues;
 import dmcjj.rmitpp.toiletlocator.helper.Util;

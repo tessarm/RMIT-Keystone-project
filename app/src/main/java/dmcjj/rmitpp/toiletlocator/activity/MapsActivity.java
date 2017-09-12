@@ -10,7 +10,7 @@ import android.location.LocationManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,21 +27,19 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import dmcjj.rmitpp.toiletlocator.R;
-import dmcjj.rmitpp.toiletlocator.database.Database;
+import dmcjj.rmitpp.toiletlocator.Database;
 import dmcjj.rmitpp.toiletlocator.geo.GeoHelper;
 import dmcjj.rmitpp.toiletlocator.geo.MyLocationListener;
-import dmcjj.rmitpp.toiletlocator.helper.Sync;
-import dmcjj.rmitpp.toiletlocator.interfaces.ILocation;
 import dmcjj.rmitpp.toiletlocator.map.IRestroomMap;
 import dmcjj.rmitpp.toiletlocator.map.RestroomMap;
 import dmcjj.rmitpp.toiletlocator.model.Toilet;
-import dmcjj.rmitpp.toiletlocator.server_model.ToiletView;
 import dmcjj.rmitpp.toiletlocator.view.CommentAdapter;
 import dmcjj.rmitpp.toiletlocator.view.SimpleDividerItemDecoration;
 import dmcjj.rmitpp.toiletlocator.view.UiHandler;
@@ -109,8 +107,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 startActivity(addToiletIntent);
             }
             break;
+            case R.id.signOut:{
+                FirebaseAuth.getInstance().signOut();
+                finish();
+            }
+            case R.id.viewToilets:{
+                Intent i = new Intent(this, ToiletViewActivity.class);
+                startActivity(i);
+            }break;
         }
         return true;
+
+
+
     }
 
     @Override
@@ -170,6 +179,28 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         else
             mFrameLayout.setVisibility(View.GONE);
 
+    }
+    public void onToiletClick(View v){
+        DataSnapshot currentToilet = mRestroomMap.getCurrentToilet();
+        Toilet t = currentToilet.getValue(Toilet.class);
+
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(t.value.getName());
+        builder.setMessage(String.format("loc=%f,%f\nrating=%f\ntimestamp=%d\nowner=%s\nviews=%d",
+                t.value.getLat(), t.value.getLng(), t.metadata.rating, t.metadata.timestamp, t.metadata.owner, -1));
+
+        builder.create().show();
+    }
+
+    public void onDirections(View v){
+        DataSnapshot currentToilet = mRestroomMap.getCurrentToilet();
+        Toilet t = currentToilet.getValue(Toilet.class);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(t.value.getName());
+        builder.setMessage("Begin directions to " + t.value.getName());
+
+        builder.create().show();
     }
 
     private void bindToilet2View(DataSnapshot toilet){

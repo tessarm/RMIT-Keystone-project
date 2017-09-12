@@ -1,13 +1,11 @@
-package dmcjj.rmitpp.toiletlocator.database;
+package dmcjj.rmitpp.toiletlocator;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.google.android.gms.common.api.TransformedResult;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
@@ -23,15 +21,10 @@ import com.google.firebase.database.Transaction;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import dmcjj.rmitpp.toiletlocator.firemodel.FireToilet;
 import dmcjj.rmitpp.toiletlocator.model.Review;
 import dmcjj.rmitpp.toiletlocator.model.FirebaseMetaData;
-import dmcjj.rmitpp.toiletlocator.model.Toilet;
 import dmcjj.rmitpp.toiletlocator.model.ToiletValues;
 import dmcjj.rmitpp.toiletlocator.server_model.LoginMeta;
-import dmcjj.rmitpp.toiletlocator.server_model.ServiceObject;
-import dmcjj.rmitpp.toiletlocator.server_model.ToiletView;
 import dmcjj.rmitpp.toiletlocator.service.ImageUploadService;
 
 /**
@@ -40,29 +33,15 @@ import dmcjj.rmitpp.toiletlocator.service.ImageUploadService;
 
 public class Database
 {
-    public static final String TOILET_URL = "toilets/data";
-    public static final String COMMENTS_URL = "toilets/comments";
-    public static final String GEOFIRE_TOILETS = "geofire/toilets";
-
-
-
-    public static DatabaseReference getUserRef(){
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        return FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid());
-    }
 
     public static Task<Void> putToilet(final Context c, final ToiletValues t, final List<Bitmap> bitmaps) throws FirebaseException {
         final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if(currentUser == null)
             throw new FirebaseException("No Current Auth User");
-        final FirebaseDatabase db = FirebaseDatabase.getInstance();
         //push toilet object
         final FirebaseMetaData metaData = new FirebaseMetaData().setOwner().setTimestamp();
 
-        final DatabaseReference tKey = db.getReference().child(TOILET_URL).push();
-
-        ContentValues v;
-
+        final DatabaseReference tKey = DbRef.DATABASE.getReference(DbRef.DBREF_TOILETS_DATA).push();
 
 
         Map<String, Object> tData = new HashMap<>();
@@ -96,7 +75,7 @@ public class Database
     }
 
     public static void putReview(String toiletKey, int rating, String comment){
-        final FirebaseDatabase db = FirebaseDatabase.getInstance();
+        //final FirebaseDatabase db = FirebaseDatabase.getInstance();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if(user == null)
             return;
@@ -104,20 +83,18 @@ public class Database
         Review review = new Review(user.getUid(), comment, rating);
 
 
-        final DatabaseReference cRef = db.getReference().child(COMMENTS_URL).child(toiletKey).push();
+        final DatabaseReference cRef = DbRef.DATABASE.getReference(DbRef.getRefToiletComments(toiletKey));
         cRef.setValue(review);
-
-
     }
 
     public static Task<Void> putLogin(LoginMeta loginMeta)
     {
-        return FirebaseDatabase.getInstance().getReference(DbRef.LOGIN).push().setValue(loginMeta);
+        return DbRef.DATABASE.getReference(DbRef.DBREF_LOGIN).push().setValue(loginMeta);
     }
 
     public static Transaction.Result putToiletView(String toiletKey)
     {
-        DatabaseReference tRef = FirebaseDatabase.getInstance().getReference(DbRef.TOILETS_DATA).
+        DatabaseReference tRef = DbRef.DATABASE.getReference(DbRef.DBREF_TOILETS_DATA).
                 child(toiletKey).child("stats/views");
 
         tRef.runTransaction(new Transaction.Handler() {
@@ -144,10 +121,5 @@ public class Database
 
         return Transaction.abort();
         //return FirebaseDatabase.getInstance().getReference(DbRef.SERVICE_QUEUE).push().setValue(object);
-    }
-
-    public static void putToilet(FireToilet.ClientBuilder toilet) {
-
-
     }
 }

@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -16,8 +15,10 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import dmcjj.rmitpp.toiletlocator.R;
-import dmcjj.rmitpp.toiletlocator.database.Database;
+import dmcjj.rmitpp.toiletlocator.Database;
 import dmcjj.rmitpp.toiletlocator.server_model.LoginMeta;
 
 
@@ -27,8 +28,8 @@ import dmcjj.rmitpp.toiletlocator.server_model.LoginMeta;
 
 public class Login extends AppCompatActivity
 {
-    private EditText etUsername;
-    private EditText etPassword;
+    @BindView(R.id.etUsername) EditText etUsername;
+    @BindView(R.id.etPassword) EditText etPassword;
 
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -37,19 +38,13 @@ public class Login extends AppCompatActivity
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if(currentUser != null)
             login(currentUser);
-
-
+        //setView
         setContentView(R.layout.jason_login);
-        etUsername = (EditText) findViewById(R.id.etUsername);
-        etPassword = (EditText) findViewById(R.id.etPassword);
+        ButterKnife.bind(this);
 
         final Button bLogin = (Button) findViewById(R.id.bLogin);
-        //final Button bRegister = (Button) findViewById(R.id.bRegister);
         final TextView tvRegisterLink = (TextView) findViewById(R.id.tvRegisterHere);
         final Button bGuest = (Button) findViewById(R.id.bGuest);
-//        final TextView tx1 = (TextView)findViewById(R.id.textView3);
-//        tx1.setVisibility(View.GONE);
-
 
         tvRegisterLink.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,8 +76,6 @@ public class Login extends AppCompatActivity
         LoginMeta loginMeta = new LoginMeta(user);
         Database.putLogin(loginMeta);
     }
-
-
     //CODE TO AUTHENTICATE USER
     private void authenticateUser()
     {

@@ -12,14 +12,9 @@ import android.util.Log;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
-import dmcjj.rmitpp.toiletlocator.database.Database;
-import dmcjj.rmitpp.toiletlocator.database.DbRef;
 import dmcjj.rmitpp.toiletlocator.geo.GeoHelper;
 import dmcjj.rmitpp.toiletlocator.geo.MyLocationListener;
-import dmcjj.rmitpp.toiletlocator.model.Review;
-import dmcjj.rmitpp.toiletlocator.server_model.LoginMeta;
 
 /**
  * Created by A on 31/08/2017.
@@ -29,7 +24,7 @@ public class ToiletApp extends Application {
     private MyLocationListener locationListener = new MyLocationListener() {
         @Override
         public void onLocationChanged(Location location) {
-            DatabaseReference loginRef = FirebaseDatabase.getInstance().getReference(DbRef.LOGIN);
+            DatabaseReference loginRef = DbRef.DATABASE.getReference(DbRef.DBREF_LOGIN);
 
             //loginRef.setValue(new LoginMeta())
         }

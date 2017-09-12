@@ -12,9 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dmcjj.rmitpp.toiletlocator.R;
-import dmcjj.rmitpp.toiletlocator.model.Toilet;
 import dmcjj.rmitpp.toiletlocator.model.ToiletRating;
-import dmcjj.rmitpp.toiletlocator.web.ToiletResponse;
+
 
 /**
  * Created by A on 9/09/2017.

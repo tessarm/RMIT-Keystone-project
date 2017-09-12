@@ -6,4 +6,12 @@
         app:showAsAction="always"
         android:title="Add Toilet"
         android:icon="@drawable/ic_add_white_24dp"/>
+
+    <item android:id="@+id/viewToilets"
+        android:title="View List"/>
+
+    <item android:id="@+id/signOut"
+        android:title="Sign Out"/>
+
+
 </menu>
