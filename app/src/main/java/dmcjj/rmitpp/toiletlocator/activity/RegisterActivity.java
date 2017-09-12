@@ -14,7 +14,9 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
 
+import dmcjj.rmitpp.toiletlocator.DbRef;
 import dmcjj.rmitpp.toiletlocator.R;
 import dmcjj.rmitpp.toiletlocator.Database;
 import dmcjj.rmitpp.toiletlocator.view.ImageAdapter;
@@ -88,8 +90,9 @@ public class RegisterActivity extends AppCompatActivity
                     FirebaseUser user = auth.getCurrentUser();
 
 
+                    DatabaseReference profile = DbRef.DATABASE.getReference(DbRef.getUserRef());
 
-                    Database.getUserRef().child("profile").child("email").setValue(email);
+                    profile.child("profile").child("email").setValue(email);
 
 
 

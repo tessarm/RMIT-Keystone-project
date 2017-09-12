@@ -10,6 +10,7 @@ import com.firebase.geofire.GeoQueryEventListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -29,11 +30,10 @@ import dmcjj.rmitpp.toiletlocator.view.UiHandler;
  *
  */
 
-public class RestroomMap implements IRestroomMap
+public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListener
 {
     private static final double MAX_SEARCH_RADIUS = 50;
     //class init
-    private FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
     private ArrayMap<String, DataSnapshot> mGeoToiletMap = new ArrayMap<>();
     private ArrayMap<String, DataSnapshot> mMarkerId2Toilet = new ArrayMap<>();
     private ArrayMap<String, Marker> mKey2Marker = new ArrayMap<>();
@@ -46,13 +46,13 @@ public class RestroomMap implements IRestroomMap
     private UiHandler mUiHandler;
     private MyLocation mMyLocation;
 
-    private double mSearchRadius = 5;
+    private double mSearchRadius = 2;
     private int mCameraZoom = 13;
 
 
     private Marker mRedMarker,mCurrentSelectedMarker;
     private DataSnapshot mCurrentToilet;
-
+    private boolean mAnimateLocation = true;
 
 
     //called when a new toilet value enters a location
@@ -64,14 +64,11 @@ public class RestroomMap implements IRestroomMap
 
             Marker toiletMarker = null;
 
-            if(mKey2Marker.containsKey(toiletKey)) {
-
+            if(mKey2Marker.containsKey(toiletKey))
                 toiletMarker = mKey2Marker.get(toiletKey);
-            }
-
-            else{
+            else
                 toiletMarker = MarkerFactory.createFromToilet(mGoogleMap, toilet);
-            }
+
 
             mGeoToiletMap.put(toiletKey, dataSnapshot);
             mKey2Marker.put(toiletKey, toiletMarker);
@@ -85,40 +82,19 @@ public class RestroomMap implements IRestroomMap
         }
     };
 
-    private GoogleMap.OnMarkerClickListener mMarkerClickListsner = new GoogleMap.OnMarkerClickListener() {
-        @Override
-        public boolean onMarkerClick(Marker marker) {
-            String markerClickId = marker.getId();
-
-            if(marker == mRedMarker)
-                return false;
-            //if select another marker set view to that toilet
-            if(mCurrentSelectedMarker != null)
-                mCurrentSelectedMarker.setVisible(true);
-            mCurrentSelectedMarker = marker;
-            mCurrentSelectedMarker.setVisible(false);
-            mRedMarker.setPosition(marker.getPosition());
-            mRedMarker.setVisible(true);
-            mCurrentToilet = mMarkerId2Toilet.get(markerClickId);
-
-            return mUiHandler.onToiletClicked(mCurrentToilet);
-
-        }
-    };
-
     //THE MAIN ENTRY POINT FOR TOILET DATA
     private GeoQueryEventListener mGeoEvent = new GeoQueryEventListener() {
         @Override
         public void onKeyEntered(String toiletKey, GeoLocation location) {
             mGeoToiletMap.put(toiletKey, null);
             Log.d("geofire", String.format("OnKeyEntered:key=%s|lat=%f|lng=%f", toiletKey, location.latitude, location.longitude));
-            mDatabase.getReference(DbRef.DBREF_TOILETS_DATA + "/"+toiletKey).addValueEventListener(mToiletValueListener);
+            DbRef.DATABASE.getReference(DbRef.DBREF_TOILETS_DATA + "/"+toiletKey).addValueEventListener(mToiletValueListener);
         }
 
         @Override
         public void onKeyExited(String toiletKey) {
             mGeoToiletMap.remove(toiletKey);
-            mDatabase.getReference(DbRef.DBREF_TOILETS_DATA + "/"+toiletKey).removeEventListener(mToiletValueListener);
+            DbRef.DATABASE.getReference(DbRef.DBREF_TOILETS_DATA + "/"+toiletKey).removeEventListener(mToiletValueListener);
             Log.d("geofire", "OnKeyExited:key="+toiletKey);
         }
 
@@ -135,7 +111,7 @@ public class RestroomMap implements IRestroomMap
         @Override public void onGeoQueryError(DatabaseError error) {Log.d("geofire", error.getMessage());}
     };
 
-    private RestroomMap(GoogleMap googleMap, Location startLocation, UiHandler uiHandler){
+    public RestroomMap(GoogleMap googleMap, Location startLocation, UiHandler uiHandler){
         this.mGoogleMap = googleMap;
         this.mMyLocation = MyLocation.create().update(startLocation);
         this.mUiHandler = uiHandler;
@@ -155,31 +131,43 @@ public class RestroomMap implements IRestroomMap
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                 new LatLng(startLocation.getLatitude(), startLocation.getLongitude()), mCameraZoom));
 
-        googleMap.setOnMarkerClickListener(mMarkerClickListsner);
+        googleMap.setOnMarkerClickListener(this);
 
     }
 
-    private void addMarker(String msg, GeoLocation geoLocation){
-        MarkerOptions ops = new MarkerOptions();
-        ops.position(new LatLng(geoLocation.latitude, geoLocation.longitude));
-        ops.title(msg);
-
-        mGoogleMap.addMarker(ops);
-    }
-
-
-
-    public static RestroomMap create(GoogleMap googleMap, Location startLocation, UiHandler uiHandler)
+    @Override
+    public boolean onMarkerClick(Marker marker)
     {
-        return new RestroomMap(googleMap, startLocation, uiHandler);
-    }
+        String markerClickId = marker.getId();
 
+        if(marker == mRedMarker)
+            return false;
+        //if select another marker set view to that toilet
+        if(mCurrentSelectedMarker != null)
+            mCurrentSelectedMarker.setVisible(true);
+        mCurrentSelectedMarker = marker;
+        mCurrentSelectedMarker.setVisible(false);
+        mRedMarker.setPosition(marker.getPosition());
+        mRedMarker.setVisible(true);
+        mCurrentToilet = mMarkerId2Toilet.get(markerClickId);
+
+        return mUiHandler.onToiletClicked(mCurrentToilet);
+    }
     //INTERFACE HERE
 
     @Override
     public void onLocationUpdate(Location location) {
         mMyLocation.update(location);
         mGeoQuery.setCenter(mMyLocation.getGeoLocation());
+        //animate location update
+
+        if(mAnimateLocation) {
+            LatLng latlng = new LatLng(location.getLatitude(), location.getLongitude());
+            CameraPosition pos = CameraPosition.builder().zoom(mCameraZoom).bearing(location.getBearing())
+                    .target(latlng).build();
+
+            mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(pos));
+        }
     }
 
     @Override
@@ -191,5 +179,6 @@ public class RestroomMap implements IRestroomMap
     public DataSnapshot getCurrentToilet() {
         return mCurrentToilet;
     }
+
 
 }

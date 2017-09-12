@@ -57,7 +57,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @BindView(R.id.textTitle) TextView mTextTitle;
     @BindView(R.id.rating) RatingBar mRatingBar;
     @BindView(R.id.textDistance) TextView mTextDistance;
-    @BindView(R.id.slideFrame) FrameLayout mFrameLayout;
+    @BindView(R.id.slideFrame) View mFrameLayout;
+    @BindView(R.id.actionDetails) View mActionButton;
+    @BindView(R.id.cardInfoPanel) View mViewLayout;
     @BindView(R.id.buttonDetails) Button mButtonDetails;
     @BindView(R.id.commentRecycler) RecyclerView mCommentRecycler;
 
@@ -66,6 +68,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         @Override
         public boolean onToiletClicked(DataSnapshot t) {
             if (t != null) {
+                showInfoPanel(true);
                 Database.putToiletView(t.getKey());
                 Log.d("mapsact", "OnToiletClickec:key=" + t.getKey());
                 bindToilet2View(t);
@@ -81,6 +84,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         public void onLocationChanged(Location location) {
             if(mRestroomMap != null)
                 mRestroomMap.onLocationUpdate(location);
+            DataSnapshot currentToilet = mRestroomMap.getCurrentToilet();
+            if(currentToilet != null) {
+                Toilet t = currentToilet.getValue(Toilet.class);
+                setDistance(t, location);
+            }
         }
     };
 
@@ -111,6 +119,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 FirebaseAuth.getInstance().signOut();
                 finish();
             }
+            break;
             case R.id.viewToilets:{
                 Intent i = new Intent(this, ToiletViewActivity.class);
                 startActivity(i);
@@ -162,7 +171,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         //get best last known location
         Location lastLocation = GeoHelper.getBestLastKnownLocation(this, new LatLng(-37.818212, 144.966355));
-        mRestroomMap = RestroomMap.create(googleMap, lastLocation, mUiHandler);
+        mRestroomMap = new RestroomMap(googleMap, lastLocation, mUiHandler);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
@@ -203,6 +212,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         builder.create().show();
     }
 
+    private void setDistance(Toilet t, Location location){
+        Location toiletLocation = GeoHelper.toLocation(t.value.getLat(), t.value.getLng());
+        float dist = toiletLocation.distanceTo(location);
+        mTextDistance.setText(String.format("%.0f", dist) + "m");
+    }
+
     private void bindToilet2View(DataSnapshot toilet){
         commentAdapter.setSnapshot(toilet.child("comments"));
         Toilet t = toilet.getValue(Toilet.class);
@@ -211,12 +226,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         mTextTitle.setText(t.value.getName());
         if(mMyLocation != null)
-        {
-            Location toiletLocation = GeoHelper.toLocation(t.value.getLat(), t.value.getLng());
-            float dist = toiletLocation.distanceTo(mMyLocation);
-            mTextDistance.setText(String.format("%.0f", dist) + "m");
-
-        }
+            setDistance(t, mMyLocation);
         mRatingBar.setRating(t.metadata.rating);
+    }
+
+
+    private void showInfoPanel(boolean show){
+        if(show){
+            mActionButton.setVisibility(View.VISIBLE);
+            mViewLayout.setVisibility(View.VISIBLE);
+        }
+        else{
+            mActionButton.setVisibility(View.INVISIBLE);
+            mViewLayout.setVisibility(View.INVISIBLE);
+        }
     }
 }

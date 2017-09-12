@@ -46,14 +46,7 @@ public class ToiletMap
 
     public void update(Location newLocation){
         //if animation set
-        if(animateLocation) {
-            LatLng latlng = new LatLng(newLocation.getLatitude(), newLocation.getLongitude());
-            CameraPosition pos = CameraPosition.builder().zoom(CAMERA_ZOOM).bearing(newLocation.getBearing())
-                    .target(latlng).build();
 
-
-            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(pos));
-        }
 
        // myLocation.set(newLocation);
 

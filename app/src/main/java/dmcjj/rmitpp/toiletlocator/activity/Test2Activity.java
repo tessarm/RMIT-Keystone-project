@@ -42,9 +42,9 @@ public class Test2Activity extends AppCompatActivity
 
 
 
-        DatabaseReference ref = Database.getUserRef().child("geofire/toilets");
+        //DatabaseReference ref = Database.getUserRef().child("geofire/toilets");
 
-        GeoFire geoFire = new GeoFire(ref);
+        //GeoFire geoFire = new GeoFire(ref);
 
         //geoFire.queryAtLocation(new GeoLocation(0,0), 1).;
 
@@ -68,7 +68,7 @@ public class Test2Activity extends AppCompatActivity
 
 
 
-        geoFire.setLocation("toilet_id", new GeoLocation(12.38, 38.938));
+        //geoFire.setLocation("toilet_id", new GeoLocation(12.38, 38.938));
 
 
 
