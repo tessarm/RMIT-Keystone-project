@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.FirebaseAuth;
@@ -26,6 +27,7 @@ import dmcjj.rmitpp.toiletlocator.model.FirebaseMetaData;
 import dmcjj.rmitpp.toiletlocator.model.ToiletValues;
 import dmcjj.rmitpp.toiletlocator.server_model.LoginMeta;
 import dmcjj.rmitpp.toiletlocator.service.ImageUploadService;
+import dmcjj.rmitpp.toiletlocator.service.ImageUploadTask;
 
 /**
  * Created by A on 31/08/2017.
@@ -45,8 +47,8 @@ public class Database
 
 
         Map<String, Object> tData = new HashMap<>();
-        tData.put("value", t);
-        tData.put("metadata", metaData);
+        tData.put(DbRef.VALUE, t);
+        tData.put(DbRef.META_DATA, metaData);
 
 
         Task<Void> task = tKey.setValue(tData);
@@ -54,15 +56,23 @@ public class Database
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()){
+                    ImageUploadTask uploadTask = new ImageUploadTask(tKey.getKey(), bitmaps);
 
+                    Thread t = new Thread(uploadTask);
+                    t.start();
+
+
+                    /*
+                    Context appContext = c.getApplicationContext();
                     for(Bitmap b : bitmaps){
-                        Intent imageUpload = new Intent(c, ImageUploadService.class);
-                        imageUpload.putExtra(ImageUploadService.EXTRA_IMAGE, b);
+                        Intent imageUpload = new Intent(appContext, ImageUploadService.class);
+                        //imageUpload.putExtra(ImageUploadService.EXTRA_IMAGE, b);
                         imageUpload.putExtra(ImageUploadService.EXTRA_KEY, tKey.getKey());
-                        c.startService(imageUpload);
-                    }
-                }
+                        appContext.startService(imageUpload);
 
+                    }
+                    */
+                }
 
                 else{
                     Exception e = task.getException();
@@ -95,7 +105,7 @@ public class Database
     public static Transaction.Result putToiletView(String toiletKey)
     {
         DatabaseReference tRef = DbRef.DATABASE.getReference(DbRef.DBREF_TOILETS_DATA).
-                child(toiletKey).child("stats/views");
+                child(toiletKey).child(DbRef.STATS_VIEW);
 
         tRef.runTransaction(new Transaction.Handler() {
             @Override
@@ -121,5 +131,16 @@ public class Database
 
         return Transaction.abort();
         //return FirebaseDatabase.getInstance().getReference(DbRef.SERVICE_QUEUE).push().setValue(object);
+    }
+
+    public static void putToiletUrl(String mToiletKey, String url)
+    {
+        DatabaseReference ref=  DbRef.DATABASE.getReference(DbRef.getToiletImages(mToiletKey));
+        ref.push().setValue(url);
+    }
+
+    public static void putToiletUrlThumb(String mToiletKey, String url) {
+        DatabaseReference ref=  DbRef.DATABASE.getReference(DbRef.getToiletImagesThumb(mToiletKey));
+        ref.push().setValue(url);
     }
 }

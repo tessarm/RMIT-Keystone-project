@@ -16,13 +16,13 @@ import java.util.List;
  * Created by A on 5/09/2017.
  */
 
-public class GeoHelper {
+public class GeoHelper
+{
 
     public static Location toLocation(double lat, double lng){
         Location toiletLocation = new Location(LocationManager.GPS_PROVIDER);
         toiletLocation.setLatitude(lat);
         toiletLocation.setLongitude(lng);
-
 
         return toiletLocation;
     }

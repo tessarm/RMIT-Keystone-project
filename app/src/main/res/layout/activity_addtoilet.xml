@@ -2,86 +2,116 @@
 <android.support.design.widget.CoordinatorLayout
     android:layout_height="match_parent"
     android:layout_width="match_parent"
+
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@android:color/darker_gray">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <android.support.v7.widget.CardView
-        android:visibility="visible"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent">
+        <android.support.v7.widget.CardView
+            android:visibility="visible"
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:paddingBottom="64dp">
 
-        <LinearLayout
-            android:orientation="vertical" android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            <LinearLayout
+                android:orientation="vertical" android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <EditText
-                style="@style/AppForm.EditText"
-                android:id="@+id/editName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Toilet Name"/>
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1px"
-                android:background="@android:color/darker_gray"/>
+                <EditText
+                    style="@style/AppForm.EditText"
+                    android:id="@+id/editName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Toilet Name"/>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:background="@android:color/darker_gray"/>
 
-            <EditText
-                style="@style/AppForm.EditText"
-                android:hint="Lat"
-                android:id="@+id/editLat"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="numberDecimal|numberSigned"/>
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1px"
-                android:background="@android:color/darker_gray"/>
+                <EditText
+                    android:enabled="false"
+                    style="@style/AppForm.EditText"
+                    android:hint="Lat"
+                    android:id="@+id/editLat"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal|numberSigned"/>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:background="@android:color/darker_gray"/>
 
-            <EditText
-                style="@style/AppForm.EditText"
-                android:hint="Lng"
-                android:id="@+id/editLng"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="numberDecimal|numberSigned"/>
+                <EditText
+                    android:enabled="false"
+                    style="@style/AppForm.EditText"
+                    android:hint="Lng"
+                    android:id="@+id/editLng"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal|numberSigned"/>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1px"
-                android:background="@android:color/darker_gray"/>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:background="@android:color/darker_gray"/>
 
-            <CheckBox
-                style="@style/AppForm.Checkbox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Male"/>
+                <org.apmem.tools.layouts.FlowLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1px"
-                android:background="@android:color/darker_gray"/>
+                    <CheckBox
+                        android:id="@+id/checkMale"
+                        style="@style/AppForm.Checkbox"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Male"/>
 
-            <CheckBox
-                style="@style/AppForm.Checkbox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Female"/>
+                    <CheckBox
+                        android:id="@+id/checkFemale"
+                        style="@style/AppForm.Checkbox"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Female"/>
+
+                    <CheckBox
+                        android:id="@+id/checkDisabled"
+                        style="@style/AppForm.Checkbox"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Disabled"/>
+
+                    <CheckBox
+                        android:id="@+id/checkUnisex"
+                        style="@style/AppForm.Checkbox"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Unisex"/>
+
+                </org.apmem.tools.layouts.FlowLayout>
 
 
-            <android.support.v7.widget.RecyclerView
-                android:layout_gravity="bottom"
-                android:id="@+id/imageRecycler"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
 
-            </android.support.v7.widget.RecyclerView>
+                <android.support.v7.widget.RecyclerView
+                    android:layout_gravity="bottom"
+                    android:id="@+id/imageRecycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                </android.support.v7.widget.RecyclerView>
 
 
-        </LinearLayout>
-    </android.support.v7.widget.CardView>
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+
+    </ScrollView>
+
+
+
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabCamera"

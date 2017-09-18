@@ -18,13 +18,12 @@ import com.google.firebase.database.DatabaseReference;
 
 import dmcjj.rmitpp.toiletlocator.DbRef;
 import dmcjj.rmitpp.toiletlocator.R;
-import dmcjj.rmitpp.toiletlocator.Database;
-import dmcjj.rmitpp.toiletlocator.view.ImageAdapter;
+import dmcjj.rmitpp.toiletlocator.view.BitmapAdapter;
 
 public class RegisterActivity extends AppCompatActivity
 {
 
-    private ImageAdapter imageAdapter;
+    private BitmapAdapter imageAdapter;
 
     private EditText etEmail;
     private EditText etName;
@@ -64,7 +63,7 @@ public class RegisterActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        imageAdapter = new ImageAdapter();
+        imageAdapter = new BitmapAdapter();
 
         etEmail = (EditText) findViewById(R.id.etEmail);
         etName = (EditText) findViewById(R.id.etName);

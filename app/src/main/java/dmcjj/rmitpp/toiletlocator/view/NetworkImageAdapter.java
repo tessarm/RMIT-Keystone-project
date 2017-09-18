@@ -1,37 +1,39 @@
 package dmcjj.rmitpp.toiletlocator.view;
 
-import android.graphics.Bitmap;
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
 
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
+import com.android.volley.toolbox.Volley;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import dmcjj.rmitpp.toiletlocator.R;
+import dmcjj.rmitpp.toiletlocator.helper.LruImageCache;
 
 /**
- * Created by A on 4/09/2017.
+ * Created by A on 16/09/2017.
  */
 
-public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHolder>
+public class NetworkImageAdapter extends RecyclerView.Adapter<NetworkImageAdapter.ImageViewHolder>
 {
-    private List<Bitmap> images = new ArrayList<>();
-    //private List<String> images = new ArrayList<>();
+    private List<String> urls = new ArrayList<>();
+    private ImageLoader imageLoader;
 
-    public ImageAdapter() {
+    public NetworkImageAdapter(Context c) {
+
+        LruImageCache imageCache = new LruImageCache();
+        imageLoader = new ImageLoader(Volley.newRequestQueue(c), imageCache);
 
     }
 
-    public void add(Bitmap bitmap){
-        images.add(bitmap);
+    public void add(String url){
+        urls.add(url);
         //imageUrls.add("http://www.petguide.com/wp-content/uploads/2013/05/jack-russell-terrier.jpg");
         //imageUrls.add("http://jrtrescue.net/wp-content/uploads/2017/01/Buddy-Happy-adoption-story-1024x768.jpg");
         //imageUrls.add("https://i.pinimg.com/736x/a4/6b/0f/a46b0f391b994618065b944f3e8995f8--miniature-fox-terrier-a-small.jpg");
@@ -52,29 +54,29 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
 
     @Override
     public void onBindViewHolder(final ImageViewHolder holder, int position) {
-        //Picasso.with(holder.imageView.getContext()).load(images.get(position)).into(holder.imageView);
-        holder.imageView.setImageBitmap(images.get(position));
+
+        holder.imageView.setImageUrl(urls.get(position), imageLoader);
 
     }
 
     @Override
     public int getItemCount() {
-        if(images == null)
+        if(urls == null)
             return 0;
-        return images.size();
+        return urls.size();
     }
 
-    public List<Bitmap> getImages() {
-        return images;
+    public List<String> getUrls() {
+        return urls;
     }
 
     public class ImageViewHolder extends RecyclerView.ViewHolder {
 
-        private ImageView imageView;
+        private NetworkImageView imageView;
 
         public ImageViewHolder(View itemView) {
             super(itemView);
-            imageView =(ImageView)itemView;
+            imageView =(NetworkImageView) itemView;
         }
     }
 }

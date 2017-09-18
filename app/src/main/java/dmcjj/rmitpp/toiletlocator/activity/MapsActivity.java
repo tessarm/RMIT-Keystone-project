@@ -19,10 +19,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.android.volley.toolbox.NetworkImageView;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -41,6 +41,8 @@ import dmcjj.rmitpp.toiletlocator.map.IRestroomMap;
 import dmcjj.rmitpp.toiletlocator.map.RestroomMap;
 import dmcjj.rmitpp.toiletlocator.model.Toilet;
 import dmcjj.rmitpp.toiletlocator.view.CommentAdapter;
+import dmcjj.rmitpp.toiletlocator.view.BitmapAdapter;
+import dmcjj.rmitpp.toiletlocator.view.NetworkImageAdapter;
 import dmcjj.rmitpp.toiletlocator.view.SimpleDividerItemDecoration;
 import dmcjj.rmitpp.toiletlocator.view.UiHandler;
 
@@ -51,7 +53,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private SupportMapFragment mMapFragment;
     private IRestroomMap mRestroomMap;
-    private CommentAdapter commentAdapter;
+    private CommentAdapter mCommentAdapter;
+    private BitmapAdapter mImageAdapter;
+    private NetworkImageAdapter mNetworkAdapter;
 
     //UI REFS
     @BindView(R.id.textTitle) TextView mTextTitle;
@@ -62,6 +66,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @BindView(R.id.cardInfoPanel) View mViewLayout;
     @BindView(R.id.buttonDetails) Button mButtonDetails;
     @BindView(R.id.commentRecycler) RecyclerView mCommentRecycler;
+    @BindView(R.id.imageRecycler) RecyclerView mImageRecycler;
 
     //Handler for Ui events from map
     private UiHandler mUiHandler = new UiHandler() {
@@ -152,16 +157,28 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         setContentView(R.layout.activity_maps);
         ButterKnife.bind(this);
 
-        commentAdapter = new CommentAdapter();
+        mCommentAdapter = new CommentAdapter();
+        mImageAdapter = new BitmapAdapter();
+        mNetworkAdapter = new NetworkImageAdapter(this);
+
         //setup recycler
         mCommentRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        mCommentRecycler.setAdapter(commentAdapter);
+        mCommentRecycler.setAdapter(mCommentAdapter);
         mCommentRecycler.addItemDecoration(new SimpleDividerItemDecoration(this));
+
+        mImageRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        mImageRecycler.setAdapter(mNetworkAdapter);
 
         mMapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
 
         mMapFragment.getMapAsync(this);
+
+        mNetworkAdapter.add("https://firebasestorage.googleapis.com/v0/b/toilet-locator-pp1.appspot.com/o/images%2Fef6dbcb3-a11c-48a1-adc7-1d08e16270b6.png?alt=media&token=eacd278e-8182-4faa-a30c-e85283be77c6");
+        mNetworkAdapter.add("https://firebasestorage.googleapis.com/v0/b/toilet-locator-pp1.appspot.com/o/images%2Fd46d2ad1-a2fd-421e-9dea-2256c0bb5a40.png?alt=media&token=966a6f0c-3c22-43f7-b72f-5fe50372757a");
+        mNetworkAdapter.add("https://firebasestorage.googleapis.com/v0/b/toilet-locator-pp1.appspot.com/o/images%2Fc85741f9-fc37-425f-a10f-56122c5c9086.png?alt=media&token=ca55f481-1887-4324-a7ad-902dff4906f5");
+
+
 
     }
 
@@ -219,7 +236,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void bindToilet2View(DataSnapshot toilet){
-        commentAdapter.setSnapshot(toilet.child("comments"));
+        mCommentAdapter.setSnapshot(toilet.child("comments"));
         Toilet t = toilet.getValue(Toilet.class);
 
         Location mMyLocation = mRestroomMap.getLastLocation();

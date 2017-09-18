@@ -46,7 +46,7 @@ public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListene
     private UiHandler mUiHandler;
     private MyLocation mMyLocation;
 
-    private double mSearchRadius = 2;
+    private double mSearchRadius = 5;
     private int mCameraZoom = 13;
 
 

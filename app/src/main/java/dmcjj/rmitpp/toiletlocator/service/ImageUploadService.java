@@ -28,6 +28,7 @@ public class ImageUploadService extends IntentService
         super("ImageUploadService");
     }
 
+
     @Override
     protected void onHandleIntent(@Nullable Intent intent)
     {
@@ -46,14 +47,8 @@ public class ImageUploadService extends IntentService
                     Log.i("fireStorage", "Uploaded:"+taskSnapshot.getDownloadUrl());
                 }
             });
-
-
-
-
-
-
         }catch(Exception e){
-
+            Log.d("imageupload", e.getMessage());
         }
 
     }

@@ -1,7 +1,6 @@
 package dmcjj.rmitpp.toiletlocator.activity;
 
 import android.Manifest;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -35,12 +34,14 @@ import java.io.File;
 import java.util.List;
 import java.util.UUID;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import dmcjj.rmitpp.toiletlocator.R;
 import dmcjj.rmitpp.toiletlocator.Database;
 import dmcjj.rmitpp.toiletlocator.geo.MyLocationListener;
 import dmcjj.rmitpp.toiletlocator.model.ToiletValues;
 import dmcjj.rmitpp.toiletlocator.helper.Util;
-import dmcjj.rmitpp.toiletlocator.view.ImageAdapter;
+import dmcjj.rmitpp.toiletlocator.view.BitmapAdapter;
 
 /**
  * Created by A on 31/08/2017.
@@ -49,17 +50,19 @@ import dmcjj.rmitpp.toiletlocator.view.ImageAdapter;
 public class AddToiletActivity extends AppCompatActivity
 {
     private static final int REQUEST_IMAGE_CAPTURE = 12;
-    private EditText editName;
-    private EditText editLat;
-    private EditText editLng;
+    @BindView(R.id.editName) EditText editName;
+    @BindView(R.id.editLat) EditText editLat;
+    @BindView(R.id.editLng) EditText editLng;
     //private ImageView testImage;
-    private CheckBox checkMale;
-    private CheckBox checkFemale;
-    private CheckBox checkDisabled;
-    private CheckBox checkUnisex;
+    @BindView(R.id.checkMale) CheckBox checkMale;
+    @BindView(R.id.checkFemale) CheckBox checkFemale;
+    @BindView(R.id.checkDisabled) CheckBox checkDisabled;
+    @BindView(R.id.checkUnisex) CheckBox checkUnisex;
     //private RecyclerView imageRecyler;
-    private RecyclerView imageRecycler;
-    private ImageAdapter imageAdapter;
+    @BindView(R.id.imageRecycler) RecyclerView imageRecycler;
+
+    private BitmapAdapter imageAdapter;
+
 
     //private GeoCoord coord = GeoCoord.NULL;
 
@@ -102,11 +105,11 @@ public class AddToiletActivity extends AppCompatActivity
             String name = editName.getText().toString();
             double lat = Double.parseDouble(editLat.getText().toString());
             double lng= Double.parseDouble(editLng.getText().toString());
-            boolean isMale = true;
-            boolean isFemale = true;
-            boolean isUnisex = false;
-            boolean isDisabled = false;
-            boolean isIndoor = true;
+            boolean isMale = checkMale.isChecked();
+            boolean isFemale = checkFemale.isChecked();
+            boolean isUnisex = checkUnisex.isChecked();
+            boolean isDisabled = checkUnisex.isChecked();
+            boolean isIndoor = checkUnisex.isChecked();
 
 
             List<Bitmap> images = imageAdapter.getImages();
@@ -134,24 +137,13 @@ public class AddToiletActivity extends AppCompatActivity
         return true;
     }
 
-    private void fireCamera(){
-        ContentValues values = new ContentValues();
-        values.put(MediaStore.Images.Media.TITLE, "New Picture");
-        values.put(MediaStore.Images.Media.DESCRIPTION, "From your Camera");
-        imageUri = getContentResolver().insert(
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-        startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             try {
                 Bitmap m =BitmapFactory.decodeFile(mPhotoFile.getAbsolutePath());
 
-                Bitmap newMap = m.createScaledBitmap(m, m.getWidth()/3, m.getHeight()/3, false);
+                Bitmap newMap = m.createScaledBitmap(m, 512, 340, false);
 
 
                 imageAdapter.add(newMap);
@@ -167,14 +159,10 @@ public class AddToiletActivity extends AppCompatActivity
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addtoilet);
-        imageAdapter = new ImageAdapter();
-        //testImage = (ImageView)findViewById(R.id.testImage);
-        editName = (EditText) findViewById(R.id.editName);
-        editLat = (EditText) findViewById(R.id.editLat);
-        editLat.setEnabled(false);
-        editLng = (EditText) findViewById(R.id.editLng);
-        editLng.setEnabled(false);
-        imageRecycler = (RecyclerView)findViewById(R.id.imageRecycler);
+        ButterKnife.bind(this);
+
+        imageAdapter = new BitmapAdapter();
+
         imageRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL,false));
         imageRecycler.setAdapter(imageAdapter);
 
