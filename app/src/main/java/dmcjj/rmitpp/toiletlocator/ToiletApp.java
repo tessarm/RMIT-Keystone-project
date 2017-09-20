@@ -52,6 +52,9 @@ public class ToiletApp extends Application {
     public void onCreate() {
         super.onCreate();
 
+//        Twitter.initialize(this);
+        // above is code from the firebase/twitter documentation - need help
+
         FirebaseAuth.getInstance().addAuthStateListener(mAuthListener);
 
 
