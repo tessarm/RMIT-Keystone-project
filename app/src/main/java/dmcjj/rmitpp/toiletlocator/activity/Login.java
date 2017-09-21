@@ -21,18 +21,33 @@ import dmcjj.rmitpp.toiletlocator.R;
 import dmcjj.rmitpp.toiletlocator.Database;
 import dmcjj.rmitpp.toiletlocator.server_model.LoginMeta;
 
+//import com.twitter.sdk.android.Twitter;
+// Don't know why the above import chucks a hissy fit
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.TwitterAuthConfig;
+import com.twitter.sdk.android.core.TwitterException;
+import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.identity.TwitterLoginButton;
+
 
 /**
  * Created by derrickphung on 10/8/17.
  */
+
+
 
 public class Login extends AppCompatActivity
 {
     @BindView(R.id.etUsername) EditText etUsername;
     @BindView(R.id.etPassword) EditText etPassword;
 
+    private TwitterLoginButton mLoginButton;
+
     protected void onCreate(Bundle savedInstanceState)
     {
+
+
         super.onCreate(savedInstanceState);
 
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -68,7 +83,63 @@ public class Login extends AppCompatActivity
             authenticateUser();
             }
         });
+
+
+//        mLoginButton = (TwitterLoginButton) findViewById(R.id.button_twitter_login);
+//        mLoginButton.setCallback(new Callback<TwitterSession>() {
+//            @Override
+//            public void success(Result<TwitterSession> result) {
+//                Log.d(TAG, "twitterLogin:success" + result);
+//                handleTwitterSession(result.data);
+//            }
+//
+//            @Override
+//            public void failure(TwitterException exception) {
+//                Log.w(TAG, "twitterLogin:failure", exception);
+//                updateUI(null);
+// above is code from the firebase/twitter documentation - need help
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Pass the activity result to the Twitter login button.
+        mLoginButton.onActivityResult(requestCode, resultCode, data);
+// above is code from the firebase/twitter documentation - need help
+    }
+
+//    private void handleTwitterSession(TwitterSession session) {
+//        Log.d(TAG, "handleTwitterSession:" + session);
+//
+//        AuthCredential credential = TwitterAuthProvider.getCredential(
+//                session.getAuthToken().token,
+//                session.getAuthToken().secret);
+//
+//        mAuth.signInWithCredential(credential)
+//                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<AuthResult> task) {
+//                        if (task.isSuccessful()) {
+//                            // Sign in success, update UI with the signed-in user's information
+//                            Log.d(TAG, "signInWithCredential:success");
+//                            FirebaseUser user = mAuth.getCurrentUser();
+//                            updateUI(user);
+//                        } else {
+//                            // If sign in fails, display a message to the user.
+//                            Log.w(TAG, "signInWithCredential:failure", task.getException());
+//                            Toast.makeText(TwitterLoginActivity.this, "Authentication failed.",
+//                                    Toast.LENGTH_SHORT).show();
+//                            updateUI(null);
+//                        }
+//
+//                        // ...
+//                    }
+//                });
+//    }
+
+    // above is code from the firebase/twitter documentation - need help
+
     private void login(FirebaseUser user){
         Intent userAreaIntent = new Intent(Login.this, MapsActivity.class);
         startActivity(userAreaIntent);
@@ -98,4 +169,9 @@ public class Login extends AppCompatActivity
         });
 
     }
+
+
+
+
+
 }
