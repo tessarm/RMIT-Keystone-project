@@ -46,7 +46,7 @@ public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListene
     private UiHandler mUiHandler;
     private MyLocation mMyLocation;
 
-    private double mSearchRadius = 5;
+    private double mSearchRadius = 50;
     private int mCameraZoom = 13;
 
 
@@ -58,9 +58,9 @@ public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListene
     //called when a new toilet value enters a location
     private ValueEventListener mToiletValueListener = new ValueEventListener() {
         @Override
-        public void onDataChange(DataSnapshot dataSnapshot) {
-            final Toilet toilet = dataSnapshot.getValue(Toilet.class);
-            final String toiletKey = dataSnapshot.getKey();
+        public void onDataChange(DataSnapshot toiletSnap) {
+            final Toilet toilet = toiletSnap.getValue(Toilet.class);
+            final String toiletKey = toiletSnap.getKey();
 
             Marker toiletMarker = null;
 
@@ -70,9 +70,9 @@ public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListene
                 toiletMarker = MarkerFactory.createFromToilet(mGoogleMap, toilet);
 
 
-            mGeoToiletMap.put(toiletKey, dataSnapshot);
+            mGeoToiletMap.put(toiletKey, toiletSnap);
             mKey2Marker.put(toiletKey, toiletMarker);
-            mMarkerId2Toilet.put(toiletMarker.getId(), dataSnapshot);
+            mMarkerId2Toilet.put(toiletMarker.getId(), toiletSnap);
 
             Log.d("restroom", toilet.toString());
         }
@@ -107,7 +107,10 @@ public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListene
                 mGeoQuery.setRadius(mSearchRadius);
             }
         }
-        @Override public void onKeyMoved(String key, GeoLocation location) {}
+        @Override public void onKeyMoved(String key, GeoLocation location)
+        {
+
+        }
         @Override public void onGeoQueryError(DatabaseError error) {Log.d("geofire", error.getMessage());}
     };
 
