@@ -7,6 +7,7 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
@@ -220,13 +221,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void onDirections(View v){
-        DataSnapshot currentToilet = mRestroomMap.getCurrentToilet();
-        Toilet t = currentToilet.getValue(Toilet.class);
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(t.value.getName());
-        builder.setMessage("Begin directions to " + t.value.getName());
-
-        builder.create().show();
+    if( mRestroomMap.getCurrentToilet() != null){
+//        String intentLocation = "google.naviagation:" + mRestroomMap.getCurrentToilet().getValue(Toilet.class).getLatLng();
+//        Uri gmmIntentUri = Uri.parse(intentLocation);
+        String intentLocation = mRestroomMap.getCurrentToilet().getValue(Toilet.class).getLatLng();
+        Uri gmmIntentUri = Uri.parse("google.navigation:" + intentLocation);
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+        Log.d("asd", mRestroomMap.getCurrentToilet().getValue(Toilet.class).getLatLng() );
+        Log.d("qwe", intentLocation);
+        mapIntent.setPackage("com.google.android.apps.maps");
+        startActivity(mapIntent);
+//        if(getPackageManager().resolveActivity(mapIntent, 0) != null)
+//            startActivity(mapIntent);
+    }
     }
 
     private void setDistance(Toilet t, Location location){

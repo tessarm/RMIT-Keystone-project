@@ -17,4 +17,9 @@ public class Toilet
         return String.format("metadata={%s},value={%s}", metadata, value);
     }
 
+    public String getLatLng()
+    {
+        return String.format("%f,%f", value.getLat(), value.getLng());
+    }
+
 }
