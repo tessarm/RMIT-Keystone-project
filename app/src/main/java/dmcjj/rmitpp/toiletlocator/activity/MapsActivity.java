@@ -1,6 +1,7 @@
 package dmcjj.rmitpp.toiletlocator.activity;
 
 
+import android.app.Activity;
 import android.content.Intent;
 
 import android.Manifest;
@@ -22,6 +23,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.toolbox.NetworkImageView;
 import com.google.android.gms.maps.GoogleMap;
@@ -57,6 +59,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private CommentAdapter mCommentAdapter;
     private BitmapAdapter mImageAdapter;
     private NetworkImageAdapter mNetworkAdapter;
+    private static final int RESULT = 0;
+    private String key;
 
     //UI REFS
     @BindView(R.id.textTitle) TextView mTextTitle;
@@ -128,7 +132,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             break;
             case R.id.viewToilets:{
                 Intent i = new Intent(this, ToiletViewActivity.class);
-                startActivity(i);
+                startActivityForResult(i,RESULT);
             }break;
         }
         return true;
@@ -136,6 +140,27 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // First we need to check if the requestCode matches the one we used.
+        if(requestCode == RESULT) {
+
+            // The resultCode is set by the AnotherActivity
+            // By convention RESULT_OK means that what ever
+            // AnotherActivity did was successful
+            if(resultCode == Activity.RESULT_OK) {
+                // Get the result from the returned Intent
+                final String result = data.getStringExtra("key");
+                mRestroomMap.focusToilet(result);
+                // Use the data - in this case, display it in a Toast.
+                Toast.makeText(this, "Result: " + result, Toast.LENGTH_LONG).show();
+            } else {
+                // AnotherActivity was not successful. No data to retrieve.
+            }
+        }
+    }
+
 
     @Override
     protected void onStart() {
@@ -157,6 +182,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         ButterKnife.bind(this);
+
+//        if (savedInstanceState == null) {
+//            Bundle extras = getIntent().getExtras();
+//            if(extras == null) {
+//                key= null;
+//            } else {
+//                key= extras.getString("key");
+//            }
+//        } else {
+//            key= (String) savedInstanceState.getSerializable("key");
+//        }
+//        if (key != null) {
+//
+//        }
 
         mCommentAdapter = new CommentAdapter();
         mImageAdapter = new BitmapAdapter();

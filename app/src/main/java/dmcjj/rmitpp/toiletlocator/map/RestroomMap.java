@@ -4,8 +4,8 @@ import android.content.Context;
 import android.location.Location;
 import android.support.v4.util.ArrayMap;
 import android.util.Log;
-import android.widget.Toast;
 
+import android.widget.Toast;
 import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.GeoQuery;
 import com.firebase.geofire.GeoQueryEventListener;
@@ -18,6 +18,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import dmcjj.rmitpp.toiletlocator.DbRef;
@@ -33,7 +34,8 @@ import dmcjj.rmitpp.toiletlocator.view.UiHandler;
  *
  */
 
-public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListener {
+public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListener
+{
     private static final double MAX_SEARCH_RADIUS = 50;
     //class init
     private ArrayMap<String, DataSnapshot> mGeoToiletMap = new ArrayMap<>();
@@ -51,8 +53,8 @@ public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListene
     private double mSearchRadius = 50;
     private int mCameraZoom = 13;
 
-
-    private Marker mRedMarker, mCurrentSelectedMarker;
+    private String mPendingKey = null;
+    private Marker mRedMarker,mCurrentSelectedMarker;
     private DataSnapshot mCurrentToilet;
     private boolean mAnimateLocation = true;
 
@@ -76,7 +78,10 @@ public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListene
             mGeoToiletMap.put(toiletKey, toiletSnap);
             mKey2Marker.put(toiletKey, toiletMarker);
             mMarkerId2Toilet.put(toiletMarker.getId(), toiletSnap);
-
+            if( mPendingKey != null){
+                focusToilet(mPendingKey);
+                mPendingKey = null;
+            }
             Log.d("restroom", toilet.toString());
         }
 
@@ -193,12 +198,36 @@ public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListene
     }
 
     @Override
+    public void focusToilet(String key) {
+
+        if (mGeoToiletMap.containsKey(key)) {
+            DataSnapshot toiletData = mGeoToiletMap.get(key);
+            Toilet toilet = toiletData.getValue(Toilet.class);
+            LatLng latlng = new LatLng(toilet.value.getLat(), toilet.value.getLng());
+
+            CameraPosition pos = CameraPosition.builder().zoom(mCameraZoom)
+                    .target(latlng).build();
+
+            mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(pos));
+
+            Marker mark = mKey2Marker.get(key);
+            onMarkerClick(mark);
+        }else{
+            DbRef.DATABASE.getReference(DbRef.DBREF_TOILETS_DATA + "/"+key).addValueEventListener(mToiletValueListener);
+            mPendingKey = key;
+        }
+
+    }
+
+    @Override
     public void getNearestToilet() {
 // function to find nearest toilet
         int arrayLoop = 0;
         float closestDistance = 5000;
         DataSnapshot closestToiletKey = null;
         Location finalLocation = null;
+
+
 
 
         int arrayCounter = mGeoToiletMap.size();
