@@ -183,6 +183,7 @@ public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListene
     }
 
     @Override
+<<<<<<< HEAD
     public void focusToilet(String key, double lat, double lng) {
         LatLng latlng = new LatLng(lat, lng);
         CameraPosition pos = CameraPosition.builder().zoom(mCameraZoom)
@@ -194,5 +195,6 @@ public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListene
 
     }
 
+=======
 
 }

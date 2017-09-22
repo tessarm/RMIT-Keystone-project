@@ -1,14 +1,22 @@
 package dmcjj.rmitpp.toiletlocator.activity;
 
 
+<<<<<<< HEAD
 import android.content.Context;
+=======
+import android.app.Activity;
+>>>>>>> 909ecb5e1d581e1bc7e27e13159c6b6c93b1115b
 import android.content.Intent;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+<<<<<<< HEAD
 import android.os.Looper;
+=======
+import android.net.Uri;
+>>>>>>> 909ecb5e1d581e1bc7e27e13159c6b6c93b1115b
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -167,9 +175,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             break;
             case R.id.viewToilets: {
                 Intent i = new Intent(this, ToiletViewActivity.class);
+<<<<<<< HEAD
                 startActivity(i);
             }
             break;
+=======
+                startActivityForResult(i,RESULT);
+            }break;
+>>>>>>> 909ecb5e1d581e1bc7e27e13159c6b6c93b1115b
         }
         return true;
 
@@ -204,8 +217,24 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         setContentView(R.layout.activity_maps);
         ButterKnife.bind(this);
 
+<<<<<<< HEAD
 
         mLocationClient = LocationServices.getFusedLocationProviderClient(this);
+=======
+//        if (savedInstanceState == null) {
+//            Bundle extras = getIntent().getExtras();
+//            if(extras == null) {
+//                key= null;
+//            } else {
+//                key= extras.getString("key");
+//            }
+//        } else {
+//            key= (String) savedInstanceState.getSerializable("key");
+//        }
+//        if (key != null) {
+//
+//        }
+>>>>>>> 909ecb5e1d581e1bc7e27e13159c6b6c93b1115b
 
         mCommentAdapter = new CommentAdapter();
         mImageAdapter = new BitmapAdapter();
