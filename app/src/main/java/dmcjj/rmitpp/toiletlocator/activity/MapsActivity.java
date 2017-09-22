@@ -189,7 +189,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         //get best last known location
         Location lastLocation = GeoHelper.getBestLastKnownLocation(this, new LatLng(-37.818212, 144.966355));
-        mRestroomMap = new RestroomMap(googleMap, lastLocation, mUiHandler);
+        mRestroomMap = new RestroomMap(googleMap, lastLocation, mUiHandler, this);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
@@ -221,12 +221,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void onDirections(View v){
+
+        // when the directions button is clicked (will show the distance in meters to the selected toilet)
+        // open google maps with directions to the selected toilets
     if( mRestroomMap.getCurrentToilet() != null){
-//        String intentLocation = "google.naviagation:" + mRestroomMap.getCurrentToilet().getValue(Toilet.class).getLatLng();
-//        Uri gmmIntentUri = Uri.parse(intentLocation);
+
         String intentLocation = mRestroomMap.getCurrentToilet().getValue(Toilet.class).getLatLng();
+        // get the location latlng of the selected toilet and convert it into a string so that it can be parsed
         Uri gmmIntentUri = Uri.parse("http://maps.google.com/?daddr=" + intentLocation);
+        // parse the google map url with the corresponding latlng
         Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+        // open google maps at the above location
         Log.d("asd", mRestroomMap.getCurrentToilet().getValue(Toilet.class).getLatLng() );
         Log.d("qwe", intentLocation);
         mapIntent.setPackage("com.google.android.apps.maps");
@@ -242,7 +247,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     public void findToilet(View v) {
         mRestroomMap.getNearestToilet();
-
+// when the map button is clicked, run the method to find the nearest toilet
     }
 
 

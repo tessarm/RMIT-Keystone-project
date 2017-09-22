@@ -1,8 +1,10 @@
 package dmcjj.rmitpp.toiletlocator.map;
 
+import android.content.Context;
 import android.location.Location;
 import android.support.v4.util.ArrayMap;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.GeoQuery;
@@ -54,6 +56,7 @@ public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListene
     private DataSnapshot mCurrentToilet;
     private boolean mAnimateLocation = true;
 
+    private Context mContext;
 
     //called when a new toilet value enters a location
     private ValueEventListener mToiletValueListener = new ValueEventListener() {
@@ -120,10 +123,11 @@ public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListene
         }
     };
 
-    public RestroomMap(GoogleMap googleMap, Location startLocation, UiHandler uiHandler) {
+    public RestroomMap(GoogleMap googleMap, Location startLocation, UiHandler uiHandler, Context context) {
         this.mGoogleMap = googleMap;
         this.mMyLocation = MyLocation.create().update(startLocation);
         this.mUiHandler = uiHandler;
+        this.mContext = context;
 
         //GeoFire geoFire = new GeoFire(mDatabase.getReference(DbRef.DBREF_GEOFIRE_TOILETS));
         mGeoQuery = DbRef.GEOFIRE_TOILETS.queryAtLocation(new GeoLocation(startLocation.getLatitude(), startLocation.getLongitude()), mSearchRadius);
@@ -190,7 +194,7 @@ public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListene
 
     @Override
     public void getNearestToilet() {
-
+// function to find nearest toilet
         int arrayLoop = 0;
         float closestDistance = 5000;
         DataSnapshot closestToiletKey = null;
@@ -198,9 +202,10 @@ public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListene
 
 
         int arrayCounter = mGeoToiletMap.size();
+        //check the size of the tolet map array to see how many toilets there are
         if (arrayCounter >= 1) {
             for (int i = 0; i < mGeoToiletMap.size(); i++) {
-
+// loops through until all entries in the arraymap are checked
                 String toiletName = mGeoToiletMap.keyAt(arrayLoop);
                 DataSnapshot toiletKey = mGeoToiletMap.valueAt(arrayLoop);
                 arrayLoop++;
@@ -208,6 +213,7 @@ public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListene
                 Location toiletLocation = GeoHelper.toLocation(t.value.getLat(), t.value.getLng());
                 float dist = toiletLocation.distanceTo(mMyLocation.getLocation());
                 if (dist < closestDistance) {
+                    // if the current toilet is closest to the previous or default max range, set the closest toilet values to match
                     closestDistance = dist;
                     closestToiletKey = toiletKey;
                     finalLocation = toiletLocation;
@@ -221,6 +227,17 @@ public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListene
                     new LatLng(finalLocation.getLatitude(), finalLocation.getLongitude()), mCameraZoom));
             mUiHandler.onToiletClicked(closestToiletKey);
 
+            // moves the camera to the closest toilet and opens the toilet info
+
+        }
+        else{
+            CharSequence text = "No Toilets nearby";
+            int duration = Toast.LENGTH_SHORT;
+
+            Toast toast = Toast.makeText(mContext, text, duration);
+            toast.show();
+
+         //Message shown if there are no toilets in the array map, therefore no toilets nearby
 
         }
 
