@@ -240,6 +240,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
     }
 
+    public void findToilet(View v) {
+        mRestroomMap.getNearestToilet();
+
+    }
+
+
     private void setDistance(Toilet t, Location location){
         Location toiletLocation = GeoHelper.toLocation(t.value.getLat(), t.value.getLng());
         float dist = toiletLocation.distanceTo(location);

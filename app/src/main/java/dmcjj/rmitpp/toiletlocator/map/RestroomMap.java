@@ -16,10 +16,11 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import dmcjj.rmitpp.toiletlocator.DbRef;
+import dmcjj.rmitpp.toiletlocator.activity.MapsActivity;
+import dmcjj.rmitpp.toiletlocator.geo.GeoHelper;
 import dmcjj.rmitpp.toiletlocator.model.Toilet;
 import dmcjj.rmitpp.toiletlocator.view.UiHandler;
 
@@ -30,8 +31,7 @@ import dmcjj.rmitpp.toiletlocator.view.UiHandler;
  *
  */
 
-public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListener
-{
+public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListener {
     private static final double MAX_SEARCH_RADIUS = 50;
     //class init
     private ArrayMap<String, DataSnapshot> mGeoToiletMap = new ArrayMap<>();
@@ -50,7 +50,7 @@ public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListene
     private int mCameraZoom = 13;
 
 
-    private Marker mRedMarker,mCurrentSelectedMarker;
+    private Marker mRedMarker, mCurrentSelectedMarker;
     private DataSnapshot mCurrentToilet;
     private boolean mAnimateLocation = true;
 
@@ -64,7 +64,7 @@ public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListene
 
             Marker toiletMarker = null;
 
-            if(mKey2Marker.containsKey(toiletKey))
+            if (mKey2Marker.containsKey(toiletKey))
                 toiletMarker = mKey2Marker.get(toiletKey);
             else
                 toiletMarker = MarkerFactory.createFromToilet(mGoogleMap, toilet);
@@ -76,6 +76,7 @@ public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListene
 
             Log.d("restroom", toilet.toString());
         }
+
         @Override
         public void onCancelled(DatabaseError databaseError) {
 
@@ -88,43 +89,48 @@ public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListene
         public void onKeyEntered(String toiletKey, GeoLocation location) {
             mGeoToiletMap.put(toiletKey, null);
             Log.d("geofire", String.format("OnKeyEntered:key=%s|lat=%f|lng=%f", toiletKey, location.latitude, location.longitude));
-            DbRef.DATABASE.getReference(DbRef.DBREF_TOILETS_DATA + "/"+toiletKey).addValueEventListener(mToiletValueListener);
+            DbRef.DATABASE.getReference(DbRef.DBREF_TOILETS_DATA + "/" + toiletKey).addValueEventListener(mToiletValueListener);
         }
 
         @Override
         public void onKeyExited(String toiletKey) {
             mGeoToiletMap.remove(toiletKey);
-            DbRef.DATABASE.getReference(DbRef.DBREF_TOILETS_DATA + "/"+toiletKey).removeEventListener(mToiletValueListener);
-            Log.d("geofire", "OnKeyExited:key="+toiletKey);
+            DbRef.DATABASE.getReference(DbRef.DBREF_TOILETS_DATA + "/" + toiletKey).removeEventListener(mToiletValueListener);
+            Log.d("geofire", "OnKeyExited:key=" + toiletKey);
         }
 
 
         @Override
         public void onGeoQueryReady() {
             Log.d("geofire", String.format("OnGeoQueryReady:size=%d|queryRadius=%f|queryLat=%f|quertLng=%f", mGeoToiletMap.size(), mSearchRadius, mGeoQuery.getCenter().latitude, mGeoQuery.getCenter().longitude));
-            if(mGeoToiletMap.size() == 0 && mSearchRadius < MAX_SEARCH_RADIUS){
+            if (mGeoToiletMap.size() == 0 && mSearchRadius < MAX_SEARCH_RADIUS) {
                 mSearchRadius *= 2;
                 mGeoQuery.setRadius(mSearchRadius);
             }
         }
-        @Override public void onKeyMoved(String key, GeoLocation location)
-        {
+
+        @Override
+        public void onKeyMoved(String key, GeoLocation location) {
 
         }
-        @Override public void onGeoQueryError(DatabaseError error) {Log.d("geofire", error.getMessage());}
+
+        @Override
+        public void onGeoQueryError(DatabaseError error) {
+            Log.d("geofire", error.getMessage());
+        }
     };
 
-    public RestroomMap(GoogleMap googleMap, Location startLocation, UiHandler uiHandler){
+    public RestroomMap(GoogleMap googleMap, Location startLocation, UiHandler uiHandler) {
         this.mGoogleMap = googleMap;
         this.mMyLocation = MyLocation.create().update(startLocation);
         this.mUiHandler = uiHandler;
 
         //GeoFire geoFire = new GeoFire(mDatabase.getReference(DbRef.DBREF_GEOFIRE_TOILETS));
-        mGeoQuery = DbRef.GEOFIRE_TOILETS.queryAtLocation(new GeoLocation(startLocation.getLatitude(), startLocation.getLongitude()),mSearchRadius);
+        mGeoQuery = DbRef.GEOFIRE_TOILETS.queryAtLocation(new GeoLocation(startLocation.getLatitude(), startLocation.getLongitude()), mSearchRadius);
         mGeoQuery.addGeoQueryEventListener(mGeoEvent);
 
         MarkerOptions selectedOps = new MarkerOptions();
-        selectedOps.position(new LatLng(0,0));
+        selectedOps.position(new LatLng(0, 0));
         selectedOps.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
         selectedOps.visible(false);
 
@@ -139,14 +145,13 @@ public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListene
     }
 
     @Override
-    public boolean onMarkerClick(Marker marker)
-    {
+    public boolean onMarkerClick(Marker marker) {
         String markerClickId = marker.getId();
 
-        if(marker == mRedMarker)
+        if (marker == mRedMarker)
             return false;
         //if select another marker set view to that toilet
-        if(mCurrentSelectedMarker != null)
+        if (mCurrentSelectedMarker != null)
             mCurrentSelectedMarker.setVisible(true);
         mCurrentSelectedMarker = marker;
         mCurrentSelectedMarker.setVisible(false);
@@ -164,7 +169,7 @@ public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListene
         mGeoQuery.setCenter(mMyLocation.getGeoLocation());
         //animate location update
 
-        if(mAnimateLocation) {
+        if (mAnimateLocation) {
             LatLng latlng = new LatLng(location.getLatitude(), location.getLongitude());
             CameraPosition pos = CameraPosition.builder().zoom(mCameraZoom).bearing(location.getBearing())
                     .target(latlng).build();
@@ -183,5 +188,42 @@ public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListene
         return mCurrentToilet;
     }
 
+    @Override
+    public void getNearestToilet() {
 
+        int arrayLoop = 0;
+        float closestDistance = 5000;
+        DataSnapshot closestToiletKey = null;
+        Location finalLocation = null;
+
+
+        int arrayCounter = mGeoToiletMap.size();
+        if (arrayCounter >= 1) {
+            for (int i = 0; i < mGeoToiletMap.size(); i++) {
+
+                String toiletName = mGeoToiletMap.keyAt(arrayLoop);
+                DataSnapshot toiletKey = mGeoToiletMap.valueAt(arrayLoop);
+                arrayLoop++;
+                Toilet t = toiletKey.getValue(Toilet.class);
+                Location toiletLocation = GeoHelper.toLocation(t.value.getLat(), t.value.getLng());
+                float dist = toiletLocation.distanceTo(mMyLocation.getLocation());
+                if (dist < closestDistance) {
+                    closestDistance = dist;
+                    closestToiletKey = toiletKey;
+                    finalLocation = toiletLocation;
+                }
+
+
+            }
+
+
+            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                    new LatLng(finalLocation.getLatitude(), finalLocation.getLongitude()), mCameraZoom));
+            mUiHandler.onToiletClicked(closestToiletKey);
+
+
+        }
+
+
+    }
 }
