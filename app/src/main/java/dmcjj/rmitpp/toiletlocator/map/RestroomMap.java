@@ -216,7 +216,7 @@ public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListene
             DbRef.DATABASE.getReference(DbRef.DBREF_TOILETS_DATA + "/"+key).addValueEventListener(mToiletValueListener);
             mPendingKey = key;
         }
-
+        mAnimateLocation = false;
     }
 
     @Override
@@ -234,7 +234,7 @@ public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListene
         //check the size of the tolet map array to see how many toilets there are
         if (arrayCounter >= 1) {
             for (int i = 0; i < mGeoToiletMap.size(); i++) {
-// loops through until all entries in the arraymap are checked
+        // loops through until all entries in the arraymap are checked
                 String toiletName = mGeoToiletMap.keyAt(arrayLoop);
                 DataSnapshot toiletKey = mGeoToiletMap.valueAt(arrayLoop);
                 arrayLoop++;
