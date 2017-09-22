@@ -216,6 +216,7 @@ public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListene
             DbRef.DATABASE.getReference(DbRef.DBREF_TOILETS_DATA + "/"+key).addValueEventListener(mToiletValueListener);
             mPendingKey = key;
         }
+        mAnimateLocation = false;
 
     }
 
