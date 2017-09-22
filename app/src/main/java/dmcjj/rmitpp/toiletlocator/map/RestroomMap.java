@@ -33,6 +33,7 @@ import dmcjj.rmitpp.toiletlocator.view.UiHandler;
  * This class draws toilet data
  *
  */
+
 public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListener
 {
     private static final double MAX_SEARCH_RADIUS = 50;
@@ -118,8 +119,18 @@ public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListene
 
         @Override
         public void onKeyMoved(String key, GeoLocation location) {
+>>>>>>> aefe4713e61daf20a8e84149720a7f42b67c0689
+
+        @Override
+        public void onKeyMoved(String key, GeoLocation location) {
 
         }
+
+        @Override
+        public void onGeoQueryError(DatabaseError error) {
+            Log.d("geofire", error.getMessage());
+        }
+=======
 
         @Override
         public void onGeoQueryError(DatabaseError error) {
@@ -203,8 +214,12 @@ public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListene
         LatLng latlng = new LatLng(lat, lng);
         CameraPosition pos = CameraPosition.builder().zoom(mCameraZoom)
                 .target(latlng).build();
+    public void focusToilet(String key) {
 
-        mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(pos));
+        if (mGeoToiletMap.containsKey(key)) {
+            DataSnapshot toiletData = mGeoToiletMap.get(key);
+            Toilet toilet = toiletData.getValue(Toilet.class);
+            LatLng latlng = new LatLng(toilet.value.getLat(), toilet.value.getLng());
 
     }
 
@@ -228,7 +243,18 @@ public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListene
             DbRef.DATABASE.getReference(DbRef.DBREF_TOILETS_DATA + "/"+key).addValueEventListener(mToiletValueListener);
             mPendingKey = key;
         }
+            CameraPosition pos = CameraPosition.builder().zoom(mCameraZoom)
+                    .target(latlng).build();
 
+            mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(pos));
+
+            Marker mark = mKey2Marker.get(key);
+            onMarkerClick(mark);
+        }else{
+            DbRef.DATABASE.getReference(DbRef.DBREF_TOILETS_DATA + "/"+key).addValueEventListener(mToiletValueListener);
+            mPendingKey = key;
+        }
+        mAnimateLocation = false;
     }
 
     @Override
@@ -241,12 +267,42 @@ public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListene
 
 
 
+<<<<<<< HEAD
 
         int arrayCounter = mGeoToiletMap.size();
         //check the size of the tolet map array to see how many toilets there are
         if (arrayCounter >= 1) {
             for (int i = 0; i < mGeoToiletMap.size(); i++) {
 // loops through until all entries in the arraymap are checked
+                String toiletName = mGeoToiletMap.keyAt(arrayLoop);
+                DataSnapshot toiletKey = mGeoToiletMap.valueAt(arrayLoop);
+                arrayLoop++;
+                Toilet t = toiletKey.getValue(Toilet.class);
+                Location toiletLocation = GeoHelper.toLocation(t.value.getLat(), t.value.getLng());
+                float dist = toiletLocation.distanceTo(mMyLocation.getLocation());
+                if (dist < closestDistance) {
+                    // if the current toilet is closest to the previous or default max range, set the closest toilet values to match
+                    closestDistance = dist;
+                    closestToiletKey = toiletKey;
+                    finalLocation = toiletLocation;
+                }
+
+
+            }
+
+
+            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                    new LatLng(finalLocation.getLatitude(), finalLocation.getLongitude()), mCameraZoom));
+            mUiHandler.onToiletClicked(closestToiletKey);
+
+            // moves the camera to the closest toilet and opens the toilet info
+
+
+        int arrayCounter = mGeoToiletMap.size();
+        //check the size of the tolet map array to see how many toilets there are
+        if (arrayCounter >= 1) {
+            for (int i = 0; i < mGeoToiletMap.size(); i++) {
+        // loops through until all entries in the arraymap are checked
                 String toiletName = mGeoToiletMap.keyAt(arrayLoop);
                 DataSnapshot toiletKey = mGeoToiletMap.valueAt(arrayLoop);
                 arrayLoop++;

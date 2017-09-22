@@ -23,4 +23,6 @@ public interface IRestroomMap extends ILocation
     void focusToilet(String key);
     void getNearestToilet();
 
+    void focusToilet(String key);
+
 }
