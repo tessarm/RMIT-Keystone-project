@@ -257,6 +257,9 @@ public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListene
                     new LatLng(finalLocation.getLatitude(), finalLocation.getLongitude()), mCameraZoom));
             mUiHandler.onToiletClicked(closestToiletKey);
 
+            Marker mark = mKey2Marker.get(closestToiletKey.getKey());
+            onMarkerClick(mark);
+
             // moves the camera to the closest toilet and opens the toilet info
 
         }
