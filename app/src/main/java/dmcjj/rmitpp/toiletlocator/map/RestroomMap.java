@@ -231,7 +231,6 @@ public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListene
 
     }
 
-=======
     @Override
     public void getNearestToilet() {
 // function to find nearest toilet
