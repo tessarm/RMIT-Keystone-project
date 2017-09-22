@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,7 +26,9 @@ import dmcjj.rmitpp.toiletlocator.server_model.LoginMeta;
 // Don't know why the above import chucks a hissy fit
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.Twitter;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
+import com.twitter.sdk.android.core.TwitterConfig;
 import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.identity.TwitterLoginButton;
@@ -49,6 +52,17 @@ public class Login extends AppCompatActivity
 
 
         super.onCreate(savedInstanceState);
+
+        TwitterAuthConfig authConfig =  new TwitterAuthConfig(
+                "IoObxTkmQvAwTLWA6fNOcfvPd",
+                "xmU0ATdXfBRh06Zpjn2XRa4F2BzjGnknsWyrTHbFSRW5XzP3lE");
+
+        TwitterConfig twitterConfig = new TwitterConfig.Builder(this)
+                .twitterAuthConfig(authConfig)
+                .build();
+
+        Twitter.initialize(twitterConfig);
+
 
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if(currentUser != null)
@@ -85,19 +99,31 @@ public class Login extends AppCompatActivity
         });
 
 
-//        mLoginButton = (TwitterLoginButton) findViewById(R.id.button_twitter_login);
-//        mLoginButton.setCallback(new Callback<TwitterSession>() {
-//            @Override
-//            public void success(Result<TwitterSession> result) {
-//                Log.d(TAG, "twitterLogin:success" + result);
-//                handleTwitterSession(result.data);
-//            }
-//
-//            @Override
-//            public void failure(TwitterException exception) {
-//                Log.w(TAG, "twitterLogin:failure", exception);
-//                updateUI(null);
-// above is code from the firebase/twitter documentation - need help
+        mLoginButton = (TwitterLoginButton) findViewById(R.id.twitter_login);
+        mLoginButton.setCallback(new Callback<TwitterSession>() {
+            @Override
+            public void success(Result<TwitterSession> result) {
+                Log.d("login", "twitterLogin:success" + result);
+               // handleTwitterSession(result.data);
+                FirebaseUser twitterUser = FirebaseAuth.getInstance().getCurrentUser();
+                login(twitterUser);
+        }
+
+            @Override
+            public void failure(TwitterException exception) {
+                Log.w("login", "twitterLogin:failure", exception);
+                updateUI(null);
+            }
+        });
+
+    }
+
+    private void handleTwitterSession(TwitterSession data) {
+
+    }
+
+    private void updateUI(Object o) {
+
     }
 
     @Override

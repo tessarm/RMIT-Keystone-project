@@ -70,6 +70,12 @@ public class NetworkImageAdapter extends RecyclerView.Adapter<NetworkImageAdapte
         return urls;
     }
 
+    public void clear() {
+        urls.clear();
+        notifyDataSetChanged();
+
+    }
+
     public class ImageViewHolder extends RecyclerView.ViewHolder {
 
         private NetworkImageView imageView;

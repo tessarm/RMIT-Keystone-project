@@ -1,15 +1,24 @@
 package dmcjj.rmitpp.toiletlocator.activity;
 
 
+<<<<<<< HEAD
+import android.content.Context;
+=======
 import android.app.Activity;
+>>>>>>> 909ecb5e1d581e1bc7e27e13159c6b6c93b1115b
 import android.content.Intent;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+<<<<<<< HEAD
+import android.os.Looper;
+=======
 import android.net.Uri;
+>>>>>>> 909ecb5e1d581e1bc7e27e13159c6b6c93b1115b
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -26,13 +35,25 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.toolbox.NetworkImageView;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.FusedLocationProviderApi;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
+import com.twitter.sdk.android.core.TwitterCore;
 
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -62,16 +83,29 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final int RESULT = 0;
     private String key;
 
+    //private GoogleApiClient mGoogleClient;
+    private FusedLocationProviderClient mLocationClient;
+    //private List<String> mImageUrls;
+
     //UI REFS
-    @BindView(R.id.textTitle) TextView mTextTitle;
-    @BindView(R.id.rating) RatingBar mRatingBar;
-    @BindView(R.id.textDistance) TextView mTextDistance;
-    @BindView(R.id.slideFrame) View mFrameLayout;
-    @BindView(R.id.actionDetails) View mActionButton;
-    @BindView(R.id.cardInfoPanel) View mViewLayout;
-    @BindView(R.id.buttonDetails) Button mButtonDetails;
-    @BindView(R.id.commentRecycler) RecyclerView mCommentRecycler;
-    @BindView(R.id.imageRecycler) RecyclerView mImageRecycler;
+    @BindView(R.id.textTitle)
+    TextView mTextTitle;
+    @BindView(R.id.rating)
+    RatingBar mRatingBar;
+    @BindView(R.id.textDistance)
+    TextView mTextDistance;
+    @BindView(R.id.slideFrame)
+    View mFrameLayout;
+    @BindView(R.id.actionDetails)
+    View mActionButton;
+    @BindView(R.id.cardInfoPanel)
+    View mViewLayout;
+    @BindView(R.id.buttonDetails)
+    Button mButtonDetails;
+    @BindView(R.id.commentRecycler)
+    RecyclerView mCommentRecycler;
+    @BindView(R.id.imageRecycler)
+    RecyclerView mImageRecycler;
 
     //Handler for Ui events from map
     private UiHandler mUiHandler = new UiHandler() {
@@ -89,15 +123,25 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     };
 
     //Current location listener
-    private MyLocationListener mCurrentLocationListener = new MyLocationListener() {
+    private MyLocationListener mCurrentLocationListenerDEP = new MyLocationListener() {
         @Override
         public void onLocationChanged(Location location) {
-            if(mRestroomMap != null)
+            if (mRestroomMap != null)
                 mRestroomMap.onLocationUpdate(location);
             DataSnapshot currentToilet = mRestroomMap.getCurrentToilet();
-            if(currentToilet != null) {
+            if (currentToilet != null) {
                 Toilet t = currentToilet.getValue(Toilet.class);
                 setDistance(t, location);
+            }
+        }
+    };
+
+    private LocationCallback mLocationCallback = new LocationCallback() {
+        @Override
+        public void onLocationResult(LocationResult locationResult) {
+            for (Location location : locationResult.getLocations()) {
+                Log.d("mapsact", "newLocation");
+                mRestroomMap.onLocationUpdate(location);
             }
         }
     };
@@ -114,6 +158,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.map_menu, menu);
         return true;
+
     }
 
     @Override
@@ -125,18 +170,24 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 startActivity(addToiletIntent);
             }
             break;
-            case R.id.signOut:{
+            case R.id.signOut: {
                 FirebaseAuth.getInstance().signOut();
                 finish();
+                TwitterCore.getInstance().getSessionManager().clearActiveSession();
             }
             break;
-            case R.id.viewToilets:{
+            case R.id.viewToilets: {
                 Intent i = new Intent(this, ToiletViewActivity.class);
+<<<<<<< HEAD
                 startActivityForResult(i,RESULT);
-            }break;
+                //startActivity(i);
+            }
+            break;
+=======
+>>>>>>> 909ecb5e1d581e1bc7e27e13159c6b6c93b1115b
+
         }
         return true;
-
 
 
     }
@@ -165,16 +216,23 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onStart() {
         super.onStart();
+        //mGoogleClient.connect();
+        LocationRequest request = LocationRequest.create();
+        request.setMaxWaitTime(1000 * 5);
+
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            return;
         }
-        else
-            GeoHelper.getLocationManager(this).requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 10, mCurrentLocationListener);
+        mLocationClient.requestLocationUpdates(request, mLocationCallback, null);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        GeoHelper.getLocationManager(this).removeUpdates(mCurrentLocationListener);
+        mLocationClient.removeLocationUpdates(mLocationCallback);
+        //mGoogleClient.disconnect();
+        //GeoHelper.getLocationManager(this).removeUpdates(mCurrentLocationListener);
     }
 
     @Override
@@ -183,6 +241,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         setContentView(R.layout.activity_maps);
         ButterKnife.bind(this);
 
+<<<<<<< HEAD
+
+
+        mLocationClient = LocationServices.getFusedLocationProviderClient(this);
+=======
 //        if (savedInstanceState == null) {
 //            Bundle extras = getIntent().getExtras();
 //            if(extras == null) {
@@ -196,6 +259,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 //        if (key != null) {
 //
 //        }
+>>>>>>> 909ecb5e1d581e1bc7e27e13159c6b6c93b1115b
 
         mCommentAdapter = new CommentAdapter();
         mImageAdapter = new BitmapAdapter();
@@ -306,6 +370,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         if(mMyLocation != null)
             setDistance(t, mMyLocation);
         mRatingBar.setRating(t.metadata.rating);
+        //get the list of images
+        mNetworkAdapter.clear();
+        DataSnapshot imageRef = toilet.child("images");
+        Iterable<DataSnapshot> images = imageRef.getChildren();
+        for(DataSnapshot url : images)
+            mNetworkAdapter.add(url.getValue(String.class));
+
     }
 
 
