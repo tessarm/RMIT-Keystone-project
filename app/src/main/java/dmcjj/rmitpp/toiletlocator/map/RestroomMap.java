@@ -84,7 +84,6 @@ public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListene
             }
             Log.d("restroom", toilet.toString());
         }
-
         @Override
         public void onCancelled(DatabaseError databaseError) {
 

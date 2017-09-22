@@ -1,15 +1,24 @@
 package dmcjj.rmitpp.toiletlocator.activity;
 
 
+<<<<<<< HEAD
+import android.content.Context;
+=======
 import android.app.Activity;
+>>>>>>> 909ecb5e1d581e1bc7e27e13159c6b6c93b1115b
 import android.content.Intent;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+<<<<<<< HEAD
+import android.os.Looper;
+=======
 import android.net.Uri;
+>>>>>>> 909ecb5e1d581e1bc7e27e13159c6b6c93b1115b
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -23,16 +32,27 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.toolbox.NetworkImageView;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.FusedLocationProviderApi;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
+import com.twitter.sdk.android.core.TwitterCore;
 
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -59,19 +79,30 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private CommentAdapter mCommentAdapter;
     private BitmapAdapter mImageAdapter;
     private NetworkImageAdapter mNetworkAdapter;
-    private static final int RESULT = 0;
-    private String key;
+
+    //private GoogleApiClient mGoogleClient;
+    private FusedLocationProviderClient mLocationClient;
+    //private List<String> mImageUrls;
 
     //UI REFS
-    @BindView(R.id.textTitle) TextView mTextTitle;
-    @BindView(R.id.rating) RatingBar mRatingBar;
-    @BindView(R.id.textDistance) TextView mTextDistance;
-    @BindView(R.id.slideFrame) View mFrameLayout;
-    @BindView(R.id.actionDetails) View mActionButton;
-    @BindView(R.id.cardInfoPanel) View mViewLayout;
-    @BindView(R.id.buttonDetails) Button mButtonDetails;
-    @BindView(R.id.commentRecycler) RecyclerView mCommentRecycler;
-    @BindView(R.id.imageRecycler) RecyclerView mImageRecycler;
+    @BindView(R.id.textTitle)
+    TextView mTextTitle;
+    @BindView(R.id.rating)
+    RatingBar mRatingBar;
+    @BindView(R.id.textDistance)
+    TextView mTextDistance;
+    @BindView(R.id.slideFrame)
+    View mFrameLayout;
+    @BindView(R.id.actionDetails)
+    View mActionButton;
+    @BindView(R.id.cardInfoPanel)
+    View mViewLayout;
+    @BindView(R.id.buttonDetails)
+    Button mButtonDetails;
+    @BindView(R.id.commentRecycler)
+    RecyclerView mCommentRecycler;
+    @BindView(R.id.imageRecycler)
+    RecyclerView mImageRecycler;
 
     //Handler for Ui events from map
     private UiHandler mUiHandler = new UiHandler() {
@@ -89,15 +120,25 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     };
 
     //Current location listener
-    private MyLocationListener mCurrentLocationListener = new MyLocationListener() {
+    private MyLocationListener mCurrentLocationListenerDEP = new MyLocationListener() {
         @Override
         public void onLocationChanged(Location location) {
-            if(mRestroomMap != null)
+            if (mRestroomMap != null)
                 mRestroomMap.onLocationUpdate(location);
             DataSnapshot currentToilet = mRestroomMap.getCurrentToilet();
-            if(currentToilet != null) {
+            if (currentToilet != null) {
                 Toilet t = currentToilet.getValue(Toilet.class);
                 setDistance(t, location);
+            }
+        }
+    };
+
+    private LocationCallback mLocationCallback = new LocationCallback() {
+        @Override
+        public void onLocationResult(LocationResult locationResult) {
+            for (Location location : locationResult.getLocations()) {
+                Log.d("mapsact", "newLocation");
+                mRestroomMap.onLocationUpdate(location);
             }
         }
     };
@@ -114,6 +155,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.map_menu, menu);
         return true;
+
     }
 
     @Override
@@ -125,56 +167,48 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 startActivity(addToiletIntent);
             }
             break;
-            case R.id.signOut:{
+            case R.id.signOut: {
                 FirebaseAuth.getInstance().signOut();
                 finish();
+                TwitterCore.getInstance().getSessionManager().clearActiveSession();
             }
             break;
-            case R.id.viewToilets:{
+            case R.id.viewToilets: {
                 Intent i = new Intent(this, ToiletViewActivity.class);
+<<<<<<< HEAD
+                startActivity(i);
+            }
+            break;
+=======
                 startActivityForResult(i,RESULT);
             }break;
+>>>>>>> 909ecb5e1d581e1bc7e27e13159c6b6c93b1115b
         }
         return true;
 
 
-
     }
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        // First we need to check if the requestCode matches the one we used.
-        if(requestCode == RESULT) {
-
-            // The resultCode is set by the AnotherActivity
-            // By convention RESULT_OK means that what ever
-            // AnotherActivity did was successful
-            if(resultCode == Activity.RESULT_OK) {
-                // Get the result from the returned Intent
-                final String result = data.getStringExtra("key");
-                mRestroomMap.focusToilet(result);
-                // Use the data - in this case, display it in a Toast.
-                Toast.makeText(this, "Result: " + result, Toast.LENGTH_LONG).show();
-            } else {
-                // AnotherActivity was not successful. No data to retrieve.
-            }
-        }
-    }
-
 
     @Override
     protected void onStart() {
         super.onStart();
+        //mGoogleClient.connect();
+        LocationRequest request = LocationRequest.create();
+        request.setMaxWaitTime(1000 * 5);
+
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            return;
         }
-        else
-            GeoHelper.getLocationManager(this).requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 10, mCurrentLocationListener);
+        mLocationClient.requestLocationUpdates(request, mLocationCallback, null);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        GeoHelper.getLocationManager(this).removeUpdates(mCurrentLocationListener);
+        mLocationClient.removeLocationUpdates(mLocationCallback);
+        //mGoogleClient.disconnect();
+        //GeoHelper.getLocationManager(this).removeUpdates(mCurrentLocationListener);
     }
 
     @Override
@@ -183,6 +217,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         setContentView(R.layout.activity_maps);
         ButterKnife.bind(this);
 
+<<<<<<< HEAD
+
+        mLocationClient = LocationServices.getFusedLocationProviderClient(this);
+=======
 //        if (savedInstanceState == null) {
 //            Bundle extras = getIntent().getExtras();
 //            if(extras == null) {
@@ -196,6 +234,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 //        if (key != null) {
 //
 //        }
+>>>>>>> 909ecb5e1d581e1bc7e27e13159c6b6c93b1115b
 
         mCommentAdapter = new CommentAdapter();
         mImageAdapter = new BitmapAdapter();
@@ -228,7 +267,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         //get best last known location
         Location lastLocation = GeoHelper.getBestLastKnownLocation(this, new LatLng(-37.818212, 144.966355));
-        mRestroomMap = new RestroomMap(googleMap, lastLocation, mUiHandler, this);
+        mRestroomMap = new RestroomMap(googleMap, lastLocation, mUiHandler);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
@@ -260,35 +299,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void onDirections(View v){
+        DataSnapshot currentToilet = mRestroomMap.getCurrentToilet();
+        Toilet t = currentToilet.getValue(Toilet.class);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(t.value.getName());
+        builder.setMessage("Begin directions to " + t.value.getName());
 
-        // when the directions button is clicked (will show the distance in meters to the selected toilet)
-        // open google maps with directions to the selected toilets
-    if( mRestroomMap.getCurrentToilet() != null){
-
-        String intentLocation = mRestroomMap.getCurrentToilet().getValue(Toilet.class).getLatLng();
-        // get the location latlng of the selected toilet and convert it into a string so that it can be parsed
-        Uri gmmIntentUri = Uri.parse("http://maps.google.com/?daddr=" + intentLocation);
-        // parse the google map url with the corresponding latlng
-        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-        // open google maps at the above location
-        Log.d("asd", mRestroomMap.getCurrentToilet().getValue(Toilet.class).getLatLng() );
-        Log.d("qwe", intentLocation);
-        mapIntent.setPackage("com.google.android.apps.maps");
-        startActivity(mapIntent);
-
-
-
-
-//        if(getPackageManager().resolveActivity(mapIntent, 0) != null)
-//            startActivity(mapIntent);
+        builder.create().show();
     }
-    }
-
-    public void findToilet(View v) {
-        mRestroomMap.getNearestToilet();
-// when the map button is clicked, run the method to find the nearest toilet
-    }
-
 
     private void setDistance(Toilet t, Location location){
         Location toiletLocation = GeoHelper.toLocation(t.value.getLat(), t.value.getLng());
@@ -306,6 +324,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         if(mMyLocation != null)
             setDistance(t, mMyLocation);
         mRatingBar.setRating(t.metadata.rating);
+        //get the list of images
+        mNetworkAdapter.clear();
+        DataSnapshot imageRef = toilet.child("images");
+        Iterable<DataSnapshot> images = imageRef.getChildren();
+        for(DataSnapshot url : images)
+            mNetworkAdapter.add(url.getValue(String.class));
+
     }
 
 
