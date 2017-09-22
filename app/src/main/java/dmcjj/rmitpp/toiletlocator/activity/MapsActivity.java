@@ -32,6 +32,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.toolbox.NetworkImageView;
 import com.google.android.gms.common.ConnectionResult;
@@ -79,6 +80,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private CommentAdapter mCommentAdapter;
     private BitmapAdapter mImageAdapter;
     private NetworkImageAdapter mNetworkAdapter;
+    private static final int RESULT = 0;
+    private String key;
 
     //private GoogleApiClient mGoogleClient;
     private FusedLocationProviderClient mLocationClient;
@@ -176,18 +179,39 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             case R.id.viewToilets: {
                 Intent i = new Intent(this, ToiletViewActivity.class);
 <<<<<<< HEAD
-                startActivity(i);
+                startActivityForResult(i,RESULT);
+                //startActivity(i);
             }
             break;
 =======
-                startActivityForResult(i,RESULT);
-            }break;
 >>>>>>> 909ecb5e1d581e1bc7e27e13159c6b6c93b1115b
+
         }
         return true;
 
 
     }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // First we need to check if the requestCode matches the one we used.
+        if(requestCode == RESULT) {
+
+            // The resultCode is set by the AnotherActivity
+            // By convention RESULT_OK means that what ever
+            // AnotherActivity did was successful
+            if(resultCode == Activity.RESULT_OK) {
+                // Get the result from the returned Intent
+                final String result = data.getStringExtra("key");
+                mRestroomMap.focusToilet(result);
+                // Use the data - in this case, display it in a Toast.
+                Toast.makeText(this, "Result: " + result, Toast.LENGTH_LONG).show();
+            } else {
+                // AnotherActivity was not successful. No data to retrieve.
+            }
+        }
+    }
+
 
     @Override
     protected void onStart() {
@@ -218,6 +242,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         ButterKnife.bind(this);
 
 <<<<<<< HEAD
+
 
         mLocationClient = LocationServices.getFusedLocationProviderClient(this);
 =======
@@ -267,7 +292,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         //get best last known location
         Location lastLocation = GeoHelper.getBestLastKnownLocation(this, new LatLng(-37.818212, 144.966355));
-        mRestroomMap = new RestroomMap(googleMap, lastLocation, mUiHandler);
+        mRestroomMap = new RestroomMap(googleMap, lastLocation, mUiHandler, this);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
@@ -299,14 +324,35 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void onDirections(View v){
-        DataSnapshot currentToilet = mRestroomMap.getCurrentToilet();
-        Toilet t = currentToilet.getValue(Toilet.class);
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(t.value.getName());
-        builder.setMessage("Begin directions to " + t.value.getName());
 
-        builder.create().show();
+        // when the directions button is clicked (will show the distance in meters to the selected toilet)
+        // open google maps with directions to the selected toilets
+    if( mRestroomMap.getCurrentToilet() != null){
+
+        String intentLocation = mRestroomMap.getCurrentToilet().getValue(Toilet.class).getLatLng();
+        // get the location latlng of the selected toilet and convert it into a string so that it can be parsed
+        Uri gmmIntentUri = Uri.parse("http://maps.google.com/?daddr=" + intentLocation);
+        // parse the google map url with the corresponding latlng
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+        // open google maps at the above location
+        Log.d("asd", mRestroomMap.getCurrentToilet().getValue(Toilet.class).getLatLng() );
+        Log.d("qwe", intentLocation);
+        mapIntent.setPackage("com.google.android.apps.maps");
+        startActivity(mapIntent);
+
+
+
+
+//        if(getPackageManager().resolveActivity(mapIntent, 0) != null)
+//            startActivity(mapIntent);
     }
+    }
+
+    public void findToilet(View v) {
+        mRestroomMap.getNearestToilet();
+// when the map button is clicked, run the method to find the nearest toilet
+    }
+
 
     private void setDistance(Toilet t, Location location){
         Location toiletLocation = GeoHelper.toLocation(t.value.getLat(), t.value.getLng());

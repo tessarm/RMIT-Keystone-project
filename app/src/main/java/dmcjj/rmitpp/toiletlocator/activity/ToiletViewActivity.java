@@ -1,5 +1,6 @@
 package dmcjj.rmitpp.toiletlocator.activity;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -23,7 +24,6 @@ public class ToiletViewActivity extends AppCompatActivity
 {
     private RecyclerView recyclerView;
     private ToiletAdapter adapter;
-
 
 
     private ChildEventListener childEventListener = new ChildEventListener() {
@@ -58,7 +58,7 @@ public class ToiletViewActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_viewtoilets);
 
-        adapter = new ToiletAdapter();
+        adapter = new ToiletAdapter(this);
         recyclerView = (RecyclerView)findViewById(R.id.recyclerView);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
@@ -74,4 +74,11 @@ public class ToiletViewActivity extends AppCompatActivity
 
 
     }
+//    @Override
+//    public void onBackPressed() {
+//        // When the user hits the back button set the resultCode
+//        // to Activity.RESULT_CANCELED to indicate a failure
+//        setResult(Activity.RESULT_CANCELED);
+//        super.onBackPressed();
+//    }
 }
