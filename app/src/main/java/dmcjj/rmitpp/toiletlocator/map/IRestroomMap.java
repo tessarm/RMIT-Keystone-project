@@ -14,4 +14,5 @@ public interface IRestroomMap extends ILocation
 {
     Location getLastLocation();
     DataSnapshot getCurrentToilet();
+    void focusToilet(String key, double lat, double lng);
 }

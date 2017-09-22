@@ -29,7 +29,6 @@ import dmcjj.rmitpp.toiletlocator.view.UiHandler;
  * This class draws toilet data
  *
  */
-
 public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListener
 {
     private static final double MAX_SEARCH_RADIUS = 50;
@@ -181,6 +180,18 @@ public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListene
     @Override
     public DataSnapshot getCurrentToilet() {
         return mCurrentToilet;
+    }
+
+    @Override
+    public void focusToilet(String key, double lat, double lng) {
+        LatLng latlng = new LatLng(lat, lng);
+        CameraPosition pos = CameraPosition.builder().zoom(mCameraZoom)
+                .target(latlng).build();
+
+        mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(pos));
+
+
+
     }
 
 
