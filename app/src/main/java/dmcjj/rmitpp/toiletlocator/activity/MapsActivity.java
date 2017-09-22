@@ -225,12 +225,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 //        String intentLocation = "google.naviagation:" + mRestroomMap.getCurrentToilet().getValue(Toilet.class).getLatLng();
 //        Uri gmmIntentUri = Uri.parse(intentLocation);
         String intentLocation = mRestroomMap.getCurrentToilet().getValue(Toilet.class).getLatLng();
-        Uri gmmIntentUri = Uri.parse("google.navigation:" + intentLocation);
+        Uri gmmIntentUri = Uri.parse("http://maps.google.com/?daddr=" + intentLocation);
         Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
         Log.d("asd", mRestroomMap.getCurrentToilet().getValue(Toilet.class).getLatLng() );
         Log.d("qwe", intentLocation);
         mapIntent.setPackage("com.google.android.apps.maps");
         startActivity(mapIntent);
+
+
+
+
 //        if(getPackageManager().resolveActivity(mapIntent, 0) != null)
 //            startActivity(mapIntent);
     }
