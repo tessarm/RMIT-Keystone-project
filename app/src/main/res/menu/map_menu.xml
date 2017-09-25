@@ -13,5 +13,8 @@
     <item android:id="@+id/signOut"
         android:title="Sign Out"/>
 
+    <item android:id="@+id/filter"
+        android:title="Filter toilets"/>
+
 
 </menu>

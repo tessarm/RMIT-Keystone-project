@@ -23,6 +23,7 @@ public class ToiletValues implements GeoReadable
     public ToiletValues(){
     }
 
+
     public ToiletValues(String name, double lat, double lng, boolean disabled, boolean male, boolean female, boolean unisex, boolean indoor){
         this.name = name;
         this.lat = lat;
