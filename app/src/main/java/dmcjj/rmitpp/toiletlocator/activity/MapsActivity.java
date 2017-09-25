@@ -306,8 +306,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         if(mMyLocation != null)
             setDistance(t, mMyLocation);
         mRatingBar.setRating(t.metadata.rating);
+        //add bitmaps
+        mNetworkAdapter.clear();
+
+        DataSnapshot images = toilet.child("images");
+        Iterable<DataSnapshot> imageSnap = images.getChildren();
+        for(DataSnapshot data : imageSnap){
+            String url = data.getValue(String.class);
+            mNetworkAdapter.add(url);
+        }
     }
 
+    @Override
+    public void onBackPressed() {
+
+    }
 
     private void showInfoPanel(boolean show){
         if(show){

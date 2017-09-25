@@ -87,6 +87,8 @@ public class AddToiletActivity extends AppCompatActivity
         public void onLocationChanged(Location location) {
             editLat.setText(""+location.getLatitude());
             editLng.setText(""+location.getLongitude());
+
+
         }
     };
 
