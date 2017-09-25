@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -26,12 +28,24 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.JsonRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseException;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 import butterknife.BindView;
@@ -39,6 +53,7 @@ import butterknife.ButterKnife;
 import dmcjj.rmitpp.toiletlocator.R;
 import dmcjj.rmitpp.toiletlocator.Database;
 import dmcjj.rmitpp.toiletlocator.geo.MyLocationListener;
+import dmcjj.rmitpp.toiletlocator.map.IRestroomMap;
 import dmcjj.rmitpp.toiletlocator.model.ToiletValues;
 import dmcjj.rmitpp.toiletlocator.helper.Util;
 import dmcjj.rmitpp.toiletlocator.view.BitmapAdapter;
@@ -51,8 +66,7 @@ public class AddToiletActivity extends AppCompatActivity
 {
     private static final int REQUEST_IMAGE_CAPTURE = 12;
     @BindView(R.id.editName) EditText editName;
-    @BindView(R.id.editLat) EditText editLat;
-    @BindView(R.id.editLng) EditText editLng;
+    @BindView(R.id.editAddress) EditText editAddress;
     //private ImageView testImage;
     @BindView(R.id.checkMale) CheckBox checkMale;
     @BindView(R.id.checkFemale) CheckBox checkFemale;
@@ -63,6 +77,18 @@ public class AddToiletActivity extends AppCompatActivity
 
     private BitmapAdapter imageAdapter;
 
+    //private IRestroomMap mRestroomMap;
+
+    Geocoder geocoder;
+    List<Address> addresses;
+    private double geoLat = 0;
+    private double geoLong = 0;
+    private String address = "";
+    private RequestQueue mRequestQue;
+    private static final String mGetUrl = "https://maps.googleapis.com/maps/api/geocode/json?address=";
+    private static final String apiKey = "&key=AIzaSyD9wZodCTrMjtE0zuwuQ-LKfZ9Z6UFNIvA";
+    private String latString = "";
+    private String lngString = "";
 
     //private GeoCoord coord = GeoCoord.NULL;
 
@@ -73,6 +99,7 @@ public class AddToiletActivity extends AppCompatActivity
         @Override
         public void onComplete(@NonNull Task<Void> task) {
             Log.d("toiletlist", "OnComplete");
+            finish();
         }
     };
     private OnFailureListener toiletFailureListener = new OnFailureListener() {
@@ -85,8 +112,20 @@ public class AddToiletActivity extends AppCompatActivity
     private LocationListener locationListener = new MyLocationListener() {
         @Override
         public void onLocationChanged(Location location) {
-            editLat.setText(""+location.getLatitude());
-            editLng.setText(""+location.getLongitude());
+            geoLat = location.getLatitude();
+            geoLong = location.getLongitude();
+
+
+            try {
+                addresses = geocoder.getFromLocation(geoLat, geoLong, 1);
+                Address ad = addresses.get(0);
+                String address = ad.getAddressLine(0);
+                editAddress.setText(address);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+//            editLat.setText(""+location.getLatitude());
+//            editLng.setText(""+location.getLongitude());
         }
     };
 
@@ -101,27 +140,72 @@ public class AddToiletActivity extends AppCompatActivity
     private void sendToDb() {
         //FireToilet.ClientBuilder toilet = new FireToilet.ClientBuilder();
 
-        try{
-            String name = editName.getText().toString();
-            double lat = Double.parseDouble(editLat.getText().toString());
-            double lng= Double.parseDouble(editLng.getText().toString());
-            boolean isMale = checkMale.isChecked();
-            boolean isFemale = checkFemale.isChecked();
-            boolean isUnisex = checkUnisex.isChecked();
-            boolean isDisabled = checkUnisex.isChecked();
-            boolean isIndoor = checkUnisex.isChecked();
+            String sendAddress = editAddress.getText().toString();
+            Geocoder sendGeocoder = new Geocoder(this, Locale.getDefault());
 
 
-            List<Bitmap> images = imageAdapter.getImages();
 
-            if(!Util.isNull(name)){
-               // Database.putToilet(toilet);
-                ToiletValues toilet = ToiletValues.create(name, lat, lng, isMale, isFemale, isUnisex, isDisabled, isIndoor);
-                Database.putToilet(this,toilet, images).addOnCompleteListener(this, toiletCompleteListener).addOnFailureListener(this, toiletFailureListener);
-            }
-        }catch(Exception e){
+            String address = editAddress.getText().toString().replace(' ', '+');
+            //replace spaces with +'s so that the url we send works
+            Log.d(address, address);
+            String getUrl = mGetUrl+address+apiKey;
+            //final url for the address to return a json file
+            // url + the adress we obtained from the geolocater or user input + our api key
+            Log.d("url", getUrl);
+            mRequestQue.add(new JsonObjectRequest(getUrl, null, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    List<Bitmap> images = imageAdapter.getImages();
+                    String name = editName.getText().toString();
+                    double lat = 0;
+                    double lng= 0;
+                    boolean isMale = checkMale.isChecked();
+                    boolean isFemale = checkFemale.isChecked();
+                    boolean isUnisex = checkUnisex.isChecked();
+                    boolean isDisabled = checkUnisex.isChecked();
+                    boolean isIndoor = checkUnisex.isChecked();
 
-        }
+
+
+
+                    JSONArray jsonArray = null;
+                    try {
+                        jsonArray = response.getJSONArray("results");
+                        for(int i=0; i<jsonArray.length(); i++){
+                            JSONObject jsonObj = jsonArray.getJSONObject(i).getJSONObject("geometry").getJSONObject("location");
+                            lat = jsonObj.getDouble("lat");
+                            lng = jsonObj.getDouble("lng");
+
+                            //iterate through the returned json file to find the latitude and longitude of the corresponding adress
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+
+
+                    if(!Util.isNull(name)){
+                        // Database.putToilet(toilet);
+                        ToiletValues toilet = ToiletValues.create(name, lat, lng, isMale, isFemale, isUnisex, isDisabled, isIndoor);
+                        try {
+                            Database.putToilet(AddToiletActivity.this,toilet, images)
+                                    .addOnCompleteListener(AddToiletActivity.this, toiletCompleteListener)
+                                    .addOnFailureListener(AddToiletActivity.this, toiletFailureListener);
+
+
+
+                        } catch (FirebaseException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+
+
+                }
+            }, null));
+
+
     }
 
     @Override
@@ -130,7 +214,6 @@ public class AddToiletActivity extends AppCompatActivity
         switch (item.getItemId()) {
             case R.id.actDone: {
                 sendToDb();
-                finish();
             }
             break;
         }
@@ -161,7 +244,9 @@ public class AddToiletActivity extends AppCompatActivity
         setContentView(R.layout.activity_addtoilet);
         ButterKnife.bind(this);
 
+        mRequestQue = Volley.newRequestQueue(this);
         imageAdapter = new BitmapAdapter();
+        geocoder = new Geocoder(this);
 
         imageRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL,false));
         imageRecycler.setAdapter(imageAdapter);
@@ -179,6 +264,21 @@ public class AddToiletActivity extends AppCompatActivity
             //do something if no perm
         }else
             manager.requestSingleUpdate(LocationManager.GPS_PROVIDER, locationListener, Looper.myLooper());
+
+//            try {
+
+//                Location myGeoLocation = mRestroomMap.getLastLocation();
+//                geoLat = myGeoLocation.getLatitude();
+//                geoLong = myGeoLocation.getLongitude();
+//                    addresses = geocoder.getFromLocation(geoLat, geoLong, 1);
+//                String address = addresses.get(0).getAddressLine(0);
+//                editAddress.setText(address);
+//
+//
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+
 
     }
 
