@@ -44,9 +44,7 @@ public class NetworkImageAdapter extends RecyclerView.Adapter<NetworkImageAdapte
     public ImageViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         View imageView = LayoutInflater.from(parent.getContext()).inflate(R.layout.image_network,parent, false);
-
-
-
+        
         ImageViewHolder imageViewHolder = new ImageViewHolder(imageView);
 
         return imageViewHolder;

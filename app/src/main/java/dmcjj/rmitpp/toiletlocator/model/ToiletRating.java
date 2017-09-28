@@ -6,7 +6,6 @@ package dmcjj.rmitpp.toiletlocator.model;
 
 public class ToiletRating
 {
-    public String text;
-    public int rating;
+
 
 }

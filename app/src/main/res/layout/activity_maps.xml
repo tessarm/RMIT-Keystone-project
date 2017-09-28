@@ -13,6 +13,16 @@
         android:layout_height="match_parent"
         tools:context="dmcjj.rmitpp.toiletlocator.activity.MapsActivity" />
 
+    <Button
+        android:id="@+id/findToilet"
+        android:layout_width="wrap_content"
+        android:layout_height="84dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:onClick="findToilet"
+        android:text="Find Toilet"
+        app:layout_anchor="@+id/map"
+        app:layout_anchorGravity="top|center_horizontal" />
+
     <android.support.v7.widget.CardView
         android:id="@+id/cardInfoPanel"
         android:layout_width="match_parent"
@@ -20,14 +30,10 @@
         android:layout_gravity="bottom"
         android:visibility="invisible">
 
-
         <RelativeLayout
             android:id="@+id/layoutMarker"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
-
-
 
 
             <RelativeLayout
@@ -96,7 +102,7 @@
                     android:id="@+id/slideFrame"
                     android:layout_width="match_parent"
                     android:layout_height="300dp"
-                    android:visibility="visible">
+                    android:visibility="gone">
 
 
 
@@ -146,15 +152,7 @@
         android:layout_marginRight="16dp"
         android:layout_marginBottom="16dp"/>
 
-    <Button
-        android:id="@+id/findToilet"
-        android:layout_width="wrap_content"
-        android:layout_height="84dp"
-        android:layout_gravity="bottom|center_horizontal"
-        android:onClick="findToilet"
-        android:text="Find Toilet"
-        app:layout_anchor="@+id/map"
-        app:layout_anchorGravity="top|center_horizontal" />
+
 
 </android.support.design.widget.CoordinatorLayout>
 

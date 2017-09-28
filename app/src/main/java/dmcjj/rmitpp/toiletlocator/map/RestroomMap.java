@@ -83,6 +83,9 @@ public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListene
                 mPendingKey = null;
             }
             Log.d("restroom", toilet.toString());
+            if(mCurrentToilet != null && mCurrentToilet.getKey().contentEquals(toiletSnap.getKey()))
+                mUiHandler.onCurrentToiletChanged(toiletSnap);
+
         }
 
         @Override
@@ -155,6 +158,8 @@ public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListene
 
     @Override
     public boolean onMarkerClick(Marker marker) {
+        if(marker == null)
+            return true;
         String markerClickId = marker.getId();
 
         if (marker == mRedMarker)
@@ -237,15 +242,17 @@ public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListene
             for (int i = 0; i < mGeoToiletMap.size(); i++) {
 // loops through until all entries in the arraymap are checked
                 String toiletName = mGeoToiletMap.keyAt(arrayLoop);
-                DataSnapshot toiletKey = mGeoToiletMap.valueAt(arrayLoop);
+                DataSnapshot toiletSnap = mGeoToiletMap.valueAt(arrayLoop);
+                if(toiletSnap == null)
+                    continue;
                 arrayLoop++;
-                Toilet t = toiletKey.getValue(Toilet.class);
+                Toilet t = toiletSnap.getValue(Toilet.class);
                 Location toiletLocation = GeoHelper.toLocation(t.value.getLat(), t.value.getLng());
                 float dist = toiletLocation.distanceTo(mMyLocation.getLocation());
                 if (dist < closestDistance) {
                     // if the current toilet is closest to the previous or default max range, set the closest toilet values to match
                     closestDistance = dist;
-                    closestToiletKey = toiletKey;
+                    closestToiletKey = toiletSnap;
                     finalLocation = toiletLocation;
                 }
 
@@ -256,6 +263,8 @@ public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListene
             mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                     new LatLng(finalLocation.getLatitude(), finalLocation.getLongitude()), mCameraZoom));
             mUiHandler.onToiletClicked(closestToiletKey);
+            Marker m = mKey2Marker.get(closestToiletKey.getKey());
+            onMarkerClick(m);
 
             // moves the camera to the closest toilet and opens the toilet info
 

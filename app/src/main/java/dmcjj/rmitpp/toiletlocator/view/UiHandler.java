@@ -11,4 +11,5 @@ import dmcjj.rmitpp.toiletlocator.model.Toilet;
 public interface UiHandler
 {
     boolean onToiletClicked(DataSnapshot toilet);
+    void onCurrentToiletChanged(DataSnapshot toilet);
 }

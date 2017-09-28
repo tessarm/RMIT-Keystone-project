@@ -46,6 +46,7 @@ import dmcjj.rmitpp.toiletlocator.model.Toilet;
 import dmcjj.rmitpp.toiletlocator.view.CommentAdapter;
 import dmcjj.rmitpp.toiletlocator.view.BitmapAdapter;
 import dmcjj.rmitpp.toiletlocator.view.NetworkImageAdapter;
+import dmcjj.rmitpp.toiletlocator.view.ReviewDialog;
 import dmcjj.rmitpp.toiletlocator.view.SimpleDividerItemDecoration;
 import dmcjj.rmitpp.toiletlocator.view.UiHandler;
 
@@ -85,6 +86,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 return true;
             }
             return false;
+        }
+
+        @Override
+        public void onCurrentToiletChanged(DataSnapshot toilet) {
+            bindToilet2View(toilet);
         }
     };
 
@@ -247,6 +253,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
     public void onToiletClick(View v){
+
+        ReviewDialog dialog = new ReviewDialog(this, mRestroomMap.getCurrentToilet());
+        dialog.show();
+
         DataSnapshot currentToilet = mRestroomMap.getCurrentToilet();
         Toilet t = currentToilet.getValue(Toilet.class);
 
@@ -256,32 +266,33 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         builder.setMessage(String.format("loc=%f,%f\nrating=%f\ntimestamp=%d\nowner=%s\nviews=%d",
                 t.value.getLat(), t.value.getLng(), t.metadata.rating, t.metadata.timestamp, t.metadata.owner, -1));
 
-        builder.create().show();
+        builder.create();
     }
+
 
     public void onDirections(View v){
 
         // when the directions button is clicked (will show the distance in meters to the selected toilet)
         // open google maps with directions to the selected toilets
-    if( mRestroomMap.getCurrentToilet() != null){
+        if( mRestroomMap.getCurrentToilet() != null){
 
-        String intentLocation = mRestroomMap.getCurrentToilet().getValue(Toilet.class).getLatLng();
-        // get the location latlng of the selected toilet and convert it into a string so that it can be parsed
-        Uri gmmIntentUri = Uri.parse("http://maps.google.com/?daddr=" + intentLocation);
-        // parse the google map url with the corresponding latlng
-        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-        // open google maps at the above location
-        Log.d("asd", mRestroomMap.getCurrentToilet().getValue(Toilet.class).getLatLng() );
-        Log.d("qwe", intentLocation);
-        mapIntent.setPackage("com.google.android.apps.maps");
-        startActivity(mapIntent);
+            String intentLocation = mRestroomMap.getCurrentToilet().getValue(Toilet.class).getLatLng();
+            // get the location latlng of the selected toilet and convert it into a string so that it can be parsed
+            Uri gmmIntentUri = Uri.parse("http://maps.google.com/?daddr=" + intentLocation);
+            // parse the google map url with the corresponding latlng
+            Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+            // open google maps at the above location
+            Log.d("asd", mRestroomMap.getCurrentToilet().getValue(Toilet.class).getLatLng() );
+            Log.d("qwe", intentLocation);
+            mapIntent.setPackage("com.google.android.apps.maps");
+            startActivity(mapIntent);
 
 
 
 
 //        if(getPackageManager().resolveActivity(mapIntent, 0) != null)
 //            startActivity(mapIntent);
-    }
+        }
     }
 
     public void findToilet(View v) {

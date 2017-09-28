@@ -6,36 +6,15 @@ package dmcjj.rmitpp.toiletlocator.model;
 
 public class Review
 {
-    private String owner;
-    private String text;
-    private int rating;
+    public String text;
+    public float rating;
 
     public Review(){
 
     }
 
-    public Review(String uid, String text, int rating){
-        this.owner = uid;
+    public Review(String text, float rating){
         this.text = text;
+        this.rating = rating;
     }
-
-    public String getUid() {
-        return owner;
-    }
-
-    public void setUid(String uid) {
-        this.owner = uid;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-
-
-
 }

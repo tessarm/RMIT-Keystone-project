@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dmcjj.rmitpp.toiletlocator.R;
+import dmcjj.rmitpp.toiletlocator.model.Review;
 import dmcjj.rmitpp.toiletlocator.model.ToiletRating;
 
 
@@ -43,7 +44,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     @Override
     public void onBindViewHolder(CommentViewHolder holder, int position) {
         DataSnapshot comment = comments.get(position);
-        ToiletRating review = comment.getValue(ToiletRating.class);
+        Review review = comment.getValue(Review.class);
         holder.textComment.setText(review.text);
         holder.rating.setRating(review.rating);
     }

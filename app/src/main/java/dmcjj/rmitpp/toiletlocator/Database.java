@@ -84,16 +84,16 @@ public class Database
         //set geofire
     }
 
-    public static void putReview(String toiletKey, int rating, String comment){
+    public static void putReview(String toiletKey, float rating, String comment){
         //final FirebaseDatabase db = FirebaseDatabase.getInstance();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if(user == null)
             return;
         //push toilet object
-        Review review = new Review(user.getUid(), comment, rating);
+        Review review = new Review(comment, rating);
 
 
-        final DatabaseReference cRef = DbRef.DATABASE.getReference(DbRef.getRefToiletComments(toiletKey));
+        final DatabaseReference cRef = DbRef.DATABASE.getReference(DbRef.getRefToiletComments(toiletKey)).child(user.getUid());
         cRef.setValue(review);
     }
 
