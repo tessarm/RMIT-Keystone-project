@@ -34,26 +34,16 @@
                     android:background="@android:color/darker_gray"/>
 
                 <EditText
-                    android:enabled="false"
+                    android:id="@+id/editAddress"
                     style="@style/AppForm.EditText"
-                    android:hint="Lat"
-                    android:id="@+id/editLat"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="numberDecimal|numberSigned"/>
+                    android:hint="Address"
+                    android:inputType="text" />
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1px"
                     android:background="@android:color/darker_gray"/>
-
-                <EditText
-                    android:enabled="false"
-                    style="@style/AppForm.EditText"
-                    android:hint="Lng"
-                    android:id="@+id/editLng"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="numberDecimal|numberSigned"/>
 
                 <View
                     android:layout_width="match_parent"

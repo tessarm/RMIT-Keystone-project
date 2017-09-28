@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -34,6 +35,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 
 
+import java.util.ArrayList;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import dmcjj.rmitpp.toiletlocator.R;
@@ -43,15 +46,17 @@ import dmcjj.rmitpp.toiletlocator.geo.MyLocationListener;
 import dmcjj.rmitpp.toiletlocator.map.IRestroomMap;
 import dmcjj.rmitpp.toiletlocator.map.RestroomMap;
 import dmcjj.rmitpp.toiletlocator.model.Toilet;
+import dmcjj.rmitpp.toiletlocator.model.ToiletFilter;
 import dmcjj.rmitpp.toiletlocator.view.CommentAdapter;
 import dmcjj.rmitpp.toiletlocator.view.BitmapAdapter;
+import dmcjj.rmitpp.toiletlocator.view.FilterDialog;
 import dmcjj.rmitpp.toiletlocator.view.NetworkImageAdapter;
 import dmcjj.rmitpp.toiletlocator.view.ReviewDialog;
 import dmcjj.rmitpp.toiletlocator.view.SimpleDividerItemDecoration;
 import dmcjj.rmitpp.toiletlocator.view.UiHandler;
 
 
-public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, FilterDialog.FilterDialogListener {
     //final vars
     private static final int PERMISSIONCHECK = 1;
 
@@ -62,6 +67,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private NetworkImageAdapter mNetworkAdapter;
     private static final int RESULT = 0;
     private String key;
+
 
     //UI REFS
     @BindView(R.id.textTitle) TextView mTextTitle;
@@ -139,7 +145,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             case R.id.viewToilets:{
                 Intent i = new Intent(this, ToiletViewActivity.class);
                 startActivityForResult(i,RESULT);
-            }break;
+            }
+            break;
+            case R.id.filter:{
+                FilterDialog newFrag = FilterDialog.newInstance();
+                newFrag.show(getFragmentManager(), "dialog");
+            }
+            break;
         }
         return true;
 
@@ -342,5 +354,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             mActionButton.setVisibility(View.INVISIBLE);
             mViewLayout.setVisibility(View.INVISIBLE);
         }
+    }
+
+    @Override
+    public void onDialogPositiveClick(android.app.DialogFragment dialog) {
+        FilterDialog filterDialog = (FilterDialog)dialog;
+        String[] mFilterItems = getResources().getStringArray(R.array.filter_name);
+        ArrayList<String> selected = new ArrayList<String>();
+        for(int i: filterDialog.mSelectedItems){
+            selected.add(mFilterItems[i]);
+        }
+        ToiletFilter filteredToilet = new ToiletFilter(selected);
+        mRestroomMap.filteredToilets(filteredToilet);
+
     }
 }

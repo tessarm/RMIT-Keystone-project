@@ -3,6 +3,7 @@ package dmcjj.rmitpp.toiletlocator.map;
 import android.content.Context;
 import android.location.Location;
 import android.support.v4.util.ArrayMap;
+import android.support.v4.util.SimpleArrayMap;
 import android.util.Log;
 
 import android.widget.Toast;
@@ -25,6 +26,8 @@ import dmcjj.rmitpp.toiletlocator.DbRef;
 import dmcjj.rmitpp.toiletlocator.activity.MapsActivity;
 import dmcjj.rmitpp.toiletlocator.geo.GeoHelper;
 import dmcjj.rmitpp.toiletlocator.model.Toilet;
+import dmcjj.rmitpp.toiletlocator.model.ToiletFilter;
+import dmcjj.rmitpp.toiletlocator.model.ToiletValues;
 import dmcjj.rmitpp.toiletlocator.view.UiHandler;
 
 /**
@@ -41,6 +44,7 @@ public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListene
     private ArrayMap<String, DataSnapshot> mGeoToiletMap = new ArrayMap<>();
     private ArrayMap<String, DataSnapshot> mMarkerId2Toilet = new ArrayMap<>();
     private ArrayMap<String, Marker> mKey2Marker = new ArrayMap<>();
+    private ArrayMap<String, DataSnapshot> mFilteredMap = new ArrayMap<>();
 
     //final vars
     private final GoogleMap mGoogleMap;
@@ -76,6 +80,7 @@ public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListene
 
 
             mGeoToiletMap.put(toiletKey, toiletSnap);
+            mFilteredMap.put(toiletKey, toiletSnap);
             mKey2Marker.put(toiletKey, toiletMarker);
             mMarkerId2Toilet.put(toiletMarker.getId(), toiletSnap);
             if( mPendingKey != null){
@@ -228,7 +233,7 @@ public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListene
     @Override
     public void getNearestToilet() {
 // function to find nearest toilet
-        int arrayLoop = 0;
+
         float closestDistance = 5000;
         DataSnapshot closestToiletKey = null;
         Location finalLocation = null;
@@ -236,17 +241,24 @@ public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListene
 
 
 
-        int arrayCounter = mGeoToiletMap.size();
+        int arrayCounter = mFilteredMap.size();
         //check the size of the tolet map array to see how many toilets there are
         if (arrayCounter >= 1) {
-            for (int i = 0; i < mGeoToiletMap.size(); i++) {
+            for (int i = 0; i < mFilteredMap.size(); i++) {
 // loops through until all entries in the arraymap are checked
+<<<<<<< HEAD
                 String toiletName = mGeoToiletMap.keyAt(arrayLoop);
                 DataSnapshot toiletSnap = mGeoToiletMap.valueAt(arrayLoop);
                 if(toiletSnap == null)
                     continue;
                 arrayLoop++;
                 Toilet t = toiletSnap.getValue(Toilet.class);
+=======
+                String toiletName = mFilteredMap.keyAt(i);
+                DataSnapshot toiletKey = mFilteredMap.valueAt(i);
+                i++;
+                Toilet t = toiletKey.getValue(Toilet.class);
+>>>>>>> 757df76baf9f9eaa35119d07d1bc0055d3c29cdf
                 Location toiletLocation = GeoHelper.toLocation(t.value.getLat(), t.value.getLng());
                 float dist = toiletLocation.distanceTo(mMyLocation.getLocation());
                 if (dist < closestDistance) {
@@ -266,6 +278,9 @@ public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListene
             Marker m = mKey2Marker.get(closestToiletKey.getKey());
             onMarkerClick(m);
 
+            Marker mark = mKey2Marker.get(closestToiletKey.getKey());
+            onMarkerClick(mark);
+
             // moves the camera to the closest toilet and opens the toilet info
 
         }
@@ -281,5 +296,26 @@ public class RestroomMap implements IRestroomMap, GoogleMap.OnMarkerClickListene
         }
 
 
+    }
+
+    @Override
+    public void filteredToilets(ToiletFilter filteredToilet) {
+//        mFilteredMap.clear();
+        mFilteredMap.putAll((SimpleArrayMap) mGeoToiletMap);
+        for(int i=0; mGeoToiletMap.size()>i; i++){
+            String toiletId = mGeoToiletMap.keyAt(i);
+            Marker marker = mKey2Marker.get(toiletId);
+            DataSnapshot toiletSnap = mGeoToiletMap.valueAt(i);
+            Toilet toilet = toiletSnap.getValue(Toilet.class);
+            if (filteredToilet.matches(toilet.value)){
+                mFilteredMap.put(toiletId, toiletSnap);
+                marker.setVisible(true);
+                Log.e("toilet123 ",toiletSnap.toString());
+            }else{
+                mFilteredMap.remove(toiletId);
+                marker.setVisible(false);
+            }
+
+        }
     }
 }
